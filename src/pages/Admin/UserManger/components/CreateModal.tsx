@@ -11,18 +11,18 @@ interface Props {
   onCancel: () => void;
 }
 const columns: ProColumns<API.UserAddDTO>[] = [
-  { title: '账号', 
-    dataIndex: 'username', 
+  { title: '账号',
+    dataIndex: 'username',
     key: 'username',
     tooltip:'请输入5-11位的账号',
   },
-  { title: '密码', 
-    dataIndex: 'password', 
+  { title: '密码',
+    dataIndex: 'password',
     key: 'password',
     initialValue:'123456',
   },
-  { title: '性别', 
-    dataIndex: 'gender', 
+  { title: '性别',
+    dataIndex: 'gender',
     key: 'gender',
     valueType:'radio',
     valueEnum:{
@@ -30,23 +30,23 @@ const columns: ProColumns<API.UserAddDTO>[] = [
       1:{text:'女'}
     }
   },
-  { title: '昵称', 
-    dataIndex: 'nickname', 
+  { title: '昵称',
+    dataIndex: 'nickname',
     key: 'nickname',
     tooltip:'选填'
   },
-  { title: '手机号', 
-    dataIndex: 'phone', 
+  { title: '手机号',
+    dataIndex: 'phone',
     key: 'phone',
     tooltip:'选填'
   },
-  { title: '邮箱', 
-    dataIndex: 'email', 
+  { title: '邮箱',
+    dataIndex: 'email',
     key: 'email',
     tooltip:'选填'
   },
-  { title: '角色', 
-    dataIndex: 'role', 
+  { title: '角色',
+    dataIndex: 'role',
     key: 'role' ,
     valueType:'radio',
     initialValue: '1',
@@ -55,8 +55,8 @@ const columns: ProColumns<API.UserAddDTO>[] = [
       1:{text:'用户'}
     }
   },
-  { title: '状态', 
-    dataIndex: 'status', 
+  { title: '状态',
+    dataIndex: 'status',
     key: 'status' ,
     valueType:'radio',
     initialValue: '0',
@@ -65,8 +65,8 @@ const columns: ProColumns<API.UserAddDTO>[] = [
       1:{text:'禁用'}
     }
   },
-  { title: '头像', 
-    dataIndex: 'avatar_url', 
+  { title: '头像',
+    dataIndex: 'avatar_url',
     key: 'avatar_url',
     initialValue:'https://qbp-file.oss-cn-beijing.aliyuncs.com/default.jpg'
   },
@@ -78,8 +78,12 @@ const columns: ProColumns<API.UserAddDTO>[] = [
 const handleAdd = async (fields: API.UserAddDTO) => {
   const hide = message.loading('正在添加');
   try {
-    await addUsingPost(fields);
+    const msg = await addUsingPost(fields);
     hide();
+    if (msg.status!==200){
+      message.error(msg.message);
+      return false;
+    }
     message.success('创建成功');
     return true;
   } catch (error: any) {

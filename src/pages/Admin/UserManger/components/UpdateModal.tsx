@@ -12,8 +12,8 @@ interface Props {
   onCancel: () => void;
 }
 const columns: ProColumns<API.UserAddDTO>[] = [
-  { title: '性别', 
-    dataIndex: 'gender', 
+  { title: '性别',
+    dataIndex: 'gender',
     key: 'gender',
     valueType:'radio',
     valueEnum:{
@@ -21,20 +21,20 @@ const columns: ProColumns<API.UserAddDTO>[] = [
       1:{ text:'女' }
     }
   },
-  { title: '昵称', 
-    dataIndex: 'nickname', 
+  { title: '昵称',
+    dataIndex: 'nickname',
     key: 'nickname',
   },
-  { title: '手机号', 
-    dataIndex: 'phone', 
+  { title: '手机号',
+    dataIndex: 'phone',
     key: 'phone',
   },
-  { title: '邮箱', 
-    dataIndex: 'email', 
+  { title: '邮箱',
+    dataIndex: 'email',
     key: 'email',
   },
-  { title: '角色', 
-    dataIndex: 'role', 
+  { title: '角色',
+    dataIndex: 'role',
     key: 'role' ,
     valueType:'radio',
     valueEnum:{
@@ -42,8 +42,8 @@ const columns: ProColumns<API.UserAddDTO>[] = [
       1:{ text:'用户' }
     }
   },
-  { title: '状态', 
-    dataIndex: 'status', 
+  { title: '状态',
+    dataIndex: 'status',
     key: 'status' ,
     valueType:'radio',
     valueEnum:{
@@ -51,8 +51,8 @@ const columns: ProColumns<API.UserAddDTO>[] = [
       1:{ text:'禁用' }
     }
   },
-  { title: '头像', 
-    dataIndex: 'avatar_url', 
+  { title: '头像',
+    dataIndex: 'avatar_url',
     render:(_,record)=>(
       <div>
         <Image src={record.avatar_url} width={70} height={70}/>
@@ -69,8 +69,12 @@ const columns: ProColumns<API.UserAddDTO>[] = [
 const handleUpdate = async (fields: API.UserUpdateDTO) => {
   const hide = message.loading('正在更新');
   try {
-    await updateUsingPost(fields);
     hide();
+    const msg = await updateUsingPost(fields);
+    if (msg.status!==200){
+      message.error(msg.message);
+      return false;
+    }
     message.success('更新成功');
     return true;
   } catch (error: any) {
