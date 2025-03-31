@@ -142,14 +142,13 @@ export default defineConfig({
   openAPI: [
     {
       requestLibPath: "import { request } from '@umijs/max'",
-      schemaPath: "http://localhost:8080/api/v2/api-docs",
+      schemaPath: "http://47.104.212.220:8066/api/v3/api-docs",
       projectName: 'user-center',
     },
   ],
-  
-  mfsu: {
-    strategy: 'normal',
-  },
+
+  mfsu: false, // 禁用 MFSU 可能有助于排除一些复杂性
+
   esbuildMinifyIIFE: true,
   requestRecord: {},
 });

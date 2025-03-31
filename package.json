@@ -45,6 +45,7 @@
     "@ant-design/icons": "^4.8.1",
     "@ant-design/pro-components": "^2.6.48",
     "@umijs/preset-ui": "^2.2.9",
+    "@umijs/renderer-react": "^4.4.6",
     "@umijs/route-utils": "^2.2.2",
     "antd": "^5.13.2",
     "antd-style": "^3.6.1",
