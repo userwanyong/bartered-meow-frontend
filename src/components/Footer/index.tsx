@@ -9,16 +9,16 @@ const Footer: React.FC = () => {
       }}
       links={[
         {
-          key: 'Qit',
-          title: 'Qit-软件工作室',
-          href: 'https://pro.ant.design',
+          key: 'Cat_shop',
+          title: '交易喵制作组',
+          href: '',
           blankTarget: true,
         },
-        
+
         {
-          key: '萌萌哒温**',
-          title: '萌萌哒温**',
-          href: 'https://ant.design',
+          key: 'Cat_shop',
+          title: '交易喵制作组',
+          href: '',
           blankTarget: true,
         },
       ]}
