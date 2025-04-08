@@ -3,8 +3,8 @@ import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
-import { requestConfig } from './requestConfig';
 import { getCurrentUser } from './services/user-center/userController';
+import { RequestConfig } from '@umijs/max';
 const loginPath = '/user/login';
 
 /**
@@ -73,9 +73,27 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   };
 };
 
+export const request: RequestConfig = {
+  timeout: 10000,
+  // other configs...
+
+  requestInterceptors: [
+    (config: any) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers = {
+          ...config.headers,
+          'token': token,
+        };
+      }
+      return config;
+    }
+  ],
+};
+
 /**
  * @name request 配置，可以配置错误处理
  * 它基于 axios 和 ahooks 的 useRequest 提供了一套统一的网络请求和错误处理方案。
  * @doc https://umijs.org/docs/max/request#配置
  */
-export const request = requestConfig;
+// export const request = requestConfig;

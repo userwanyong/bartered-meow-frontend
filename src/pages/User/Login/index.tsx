@@ -71,6 +71,8 @@ const Login: React.FC = () => {
       });
       if (user) {
         const defaultLoginSuccessMessage = '登录成功！';
+        // 保存 token 到 localStorage
+        localStorage.setItem('token', user.data?.token || '');
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;

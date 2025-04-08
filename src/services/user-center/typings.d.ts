@@ -159,6 +159,7 @@ declare namespace API {
     email?: string;
     status?: number;
     role?: number;
+    token?: string;
     avatar_url?: string;
     created_time?: string;
     updated_time?: string;
