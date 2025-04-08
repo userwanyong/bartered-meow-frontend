@@ -1,10 +1,20 @@
-import { PageContainer } from '@ant-design/pro-components';
+import { 
+    LogoutOutlined,
+    UserOutlined,
+    HomeOutlined,
+    LockOutlined,
+    ShoppingOutlined,
+    ShopOutlined,
+    ShoppingCartOutlined,
+    OrderedListOutlined,
+    SettingOutlined,
+    ArrowLeftOutlined
+  } from '@ant-design/icons';
 import { Card, List, Image, Typography, Space, Input, Dropdown, Avatar, Menu } from 'antd';
-import { UserOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { createStyles } from 'antd-style';
 import { history, useModel } from '@umijs/max';
-import { listGoods, listTag ,listGoodsByTagId } from '@/services/user-center/goodsController';
+import { listGoods, listTag, listGoodsByTagId } from '@/services/user-center/goodsController';
 import { MenuProps } from 'antd';  // 添加这个导入
 import { message } from 'antd';
 
@@ -169,8 +179,14 @@ const GoodsPage: React.FC = () => {
 
     const handleMenuClick = ({ key }: { key: string }) => {
         switch (key) {
+            case 'first':
+                history.push('/goods');
+                break;
             case 'profile':
                 history.push('/user/profile');
+                break;
+            case 'password':
+                history.push('/user/password');
                 break;
             case 'buy':
                 history.push('/user/buy');
@@ -180,10 +196,10 @@ const GoodsPage: React.FC = () => {
                 break;
             case 'cart':
                 history.push('/user/cart');
-            break;
+                break;
             case 'orders':
                 history.push('/user/orders');
-            break;
+                break;
             case 'manage':
                 history.push('/admin');
                 break;
@@ -199,28 +215,38 @@ const GoodsPage: React.FC = () => {
 
     const menuItems: MenuProps['items'] = [
         {
+            key: 'first',
+            icon: <HomeOutlined  />,
+            label: '首页',
+        },
+        {
             key: 'profile',
             icon: <UserOutlined />,
             label: '个人中心',
         },
         {
+            key: 'password',
+            icon: <LockOutlined  />,
+            label: '修改密码',
+        },
+        {
             key: 'buy',
-            icon: <UserOutlined />,
+            icon: <ShoppingOutlined  />,
             label: '我要买',
         },
         {
             key: 'sell',
-            icon: <UserOutlined />,
+            icon: <ShopOutlined  />,
             label: '我要卖',
         },
         {
             key: 'cart',
-            icon: <UserOutlined />,
+            icon: <ShoppingCartOutlined  />,
             label: '我的购物车',
         },
         {
             key: 'orders',
-            icon: <UserOutlined />,
+            icon: <OrderedListOutlined  />,
             label: '我的订单',
         },
         // 只有管理员（role === 0）才显示后台管理选项
@@ -316,8 +342,8 @@ const GoodsPage: React.FC = () => {
                                 <Card
                                     hoverable
                                     className={styles.card}
-                                    onClick={() => history.push(`/user/goods/detail/${item.id}`, { 
-                                        goodsDetail: item 
+                                    onClick={() => history.push(`/user/goods/detail/${item.id}`, {
+                                        goodsDetail: item
                                     })}
                                     cover={
                                         <Image
