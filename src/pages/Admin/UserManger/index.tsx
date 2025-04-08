@@ -1,9 +1,9 @@
-import { deleteUsingPost, listUsingGet } from '@/services/user-center/userController';
+import { deleteUsingPost, list } from '@/services/user-center/userController';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, message, Space, Typography,Image } from 'antd';
+import { Button, Image, message, Space, Typography } from 'antd';
 import React, { useRef, useState } from 'react';
 import CreateModal from './components/CreateModal';
 import UpdateModal from './components/UpdateModal';
@@ -20,14 +20,14 @@ const UserAdminPage: React.FC = () => {
   const [updateModalVisible, setUpdateModalVisible] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
   // 当前用户点击的数据
-  const [currentRow, setCurrentRow] = useState<API.UserVo>();
+  const [currentRow, setCurrentRow] = useState<API.UserResponseDTO>();
 
   /**
    * 删除节点
    *
    * @param row
    */
-  const handleDelete = async (row: API.UserVo) => {
+  const handleDelete = async (row: API.UserResponseDTO) => {
     const hide = message.loading('正在删除');
     if (!row) return true;
     try {
@@ -48,20 +48,20 @@ const UserAdminPage: React.FC = () => {
   /**
    * 表格列配置
    */
-  const columns: ProColumns<API.UserVo>[] = [
+  const columns: ProColumns<API.UserResponseDTO>[] = [
     {
       title: 'id',
       dataIndex: 'id',
       copyable: true,
       ellipsis: true,
-      editable: false
+      editable: false,
     },
     {
       title: '账号',
       dataIndex: 'username',
       copyable: true,
       ellipsis: true,
-      editable: false
+      editable: false,
     },
     {
       title: '昵称',
@@ -72,26 +72,26 @@ const UserAdminPage: React.FC = () => {
     {
       title: '头像',
       dataIndex: 'avatar_url',
-      render:(_,record)=>(
+      render: (_, record) => (
         <div>
-          <Image src={record.avatar_url} width={70} height={70}/>
+          <Image src={record.avatar_url} width={70} height={70} />
         </div>
       ),
       ellipsis: true,
-      search: false,//不显示该字段的搜索框
+      search: false, //不显示该字段的搜索框
     },
     {
       title: '性别',
       dataIndex: 'gender',
       ellipsis: true,
-      valueEnum:{
-        0:{
-          text:'男',
+      valueEnum: {
+        0: {
+          text: '男',
         },
-        1:{
-          text:'女',
-        }
-      }
+        1: {
+          text: '女',
+        },
+      },
     },
     {
       title: '电话',
@@ -109,14 +109,14 @@ const UserAdminPage: React.FC = () => {
       title: '角色',
       dataIndex: 'role',
       ellipsis: true,
-      valueEnum:{
-        0:{
-          text:'管理员',
+      valueEnum: {
+        0: {
+          text: '管理员',
         },
-        1:{
-          text:'用户',
-        }
-      }
+        1: {
+          text: '用户',
+        },
+      },
     },
     {
       // disable: true,
@@ -173,7 +173,7 @@ const UserAdminPage: React.FC = () => {
   ];
   return (
     <PageContainer>
-      <ProTable<API.UserVo>
+      <ProTable<API.UserResponseDTO>
         headerTitle={'用户数据'}
         actionRef={actionRef}
         rowKey="id" //解决Warning: Each child in a list should have a unique "key" prop.报错
@@ -195,12 +195,12 @@ const UserAdminPage: React.FC = () => {
         request={async (params, sort, filter) => {
           // const sortField = Object.keys(sort)?.[0];
           // const sortOrder = sort?.[sortField] ?? undefined;
-          const userList = await listUsingGet({
+          const userList = await list({
             ...params,
             // sortField,
             // sortOrder,
             ...filter,
-          } as API.listUsingGETParams);
+          } as API.listParams);
 
           return userList;
         }}
