@@ -72,7 +72,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: '交易喵',
+  title: '软件工作室',
   layout: {
     locale: true,
     ...defaultSettings,
@@ -142,7 +142,7 @@ export default defineConfig({
   openAPI: [
     {
       requestLibPath: "import { request } from '@umijs/max'",
-      schemaPath: "http://localhost:8066/api/v3/api-docs",
+      schemaPath: 'http://localhost:8066/api/v3/api-docs',
       projectName: 'user-center',
     },
   ],

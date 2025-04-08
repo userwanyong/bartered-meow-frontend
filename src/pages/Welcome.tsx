@@ -128,7 +128,9 @@ const Welcome: React.FC = () => {
               width: '65%',
             }}
           >
-            任务规划：带领大家完成以下前端（react）+后端（springboot）的开发，能够拥有一个简单的后台管理系统框架，并且能够实现用户注册、登录、注销、用户管理、条件查询等功能<br /><br />
+            任务规划：带领大家完成以下前端（react）+后端（springboot）的开发，能够拥有一个简单的后台管理系统框架，并且能够实现用户注册、登录、注销、用户管理、条件查询等功能
+            <br />
+            <br />
             拓展任务：自己完善用户个人信息的修改、修改密码、忘记密码等功能
           </p>
           <div
@@ -144,11 +146,17 @@ const Welcome: React.FC = () => {
               title="前端"
               desc={
                 <>
-                  react + ant design pro<br /><br />
-                  登录界面<br />
-                  注册界面<br />
-                  主体界面<br />
-                  用户管理界面<br />
+                  react + ant design pro
+                  <br />
+                  <br />
+                  登录界面
+                  <br />
+                  注册界面
+                  <br />
+                  主体界面
+                  <br />
+                  用户管理界面
+                  <br />
                 </>
               }
             />
@@ -158,19 +166,28 @@ const Welcome: React.FC = () => {
               href="https://ant.design"
               desc={
                 <>
-                  springboot + mybatis-plus + mysql<br /><br />
-                  用户注册：/user/register<br />
-                  用户登录：/user/login<br />
-                  用户注销：/user/logout<br />
-                  获取当前登录用户信息：/user/current<br />
-                  条件查询所有用户：/user/list<br />
-                  添加用户：/user/add<br />
-                  修改用户：/user/update<br />
-                  删除用户：/user/delete<br />
+                  springboot + mybatis-plus + mysql
+                  <br />
+                  <br />
+                  用户注册：/user/register
+                  <br />
+                  用户登录：/user/login
+                  <br />
+                  用户注销：/user/logout
+                  <br />
+                  获取当前登录用户信息：/user/current
+                  <br />
+                  条件查询所有用户：/user/list
+                  <br />
+                  添加用户：/user/add
+                  <br />
+                  修改用户：/user/update
+                  <br />
+                  删除用户：/user/delete
+                  <br />
                 </>
               }
             />
-            
           </div>
         </div>
       </Card>

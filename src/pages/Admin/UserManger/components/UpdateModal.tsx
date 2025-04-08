@@ -1,61 +1,56 @@
-import { updateUsingPost } from '@/services/user-center/userController';
+import { update } from '@/services/user-center/userController';
 import { ProColumns, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { message, Modal ,Image} from 'antd';
+import { Image, message, Modal } from 'antd';
 import React from 'react';
 
 interface Props {
-  oldData?: API.UserVo;
+  oldData?: API.UserResponseDTO;
   visible: boolean;
-  columns: ProColumns<API.UserUpdateDTO>[];
-  onSubmit: (values: API.UserUpdateDTO) => void;
+  columns: ProColumns<API.UserUpdateRequestDTO>[];
+  onSubmit: (values: API.UserUpdateRequestDTO) => void;
   onCancel: () => void;
 }
-const columns: ProColumns<API.UserAddDTO>[] = [
-  { title: '性别',
+const columns: ProColumns<API.UserUpdateRequestDTO>[] = [
+  {
+    title: '性别',
     dataIndex: 'gender',
     key: 'gender',
-    valueType:'radio',
-    valueEnum:{
-      0:{ text:'男' },
-      1:{ text:'女' }
-    }
+    valueType: 'radio',
+    valueEnum: {
+      0: { text: '男' },
+      1: { text: '女' },
+    },
   },
-  { title: '昵称',
-    dataIndex: 'nickname',
-    key: 'nickname',
-  },
-  { title: '手机号',
-    dataIndex: 'phone',
-    key: 'phone',
-  },
-  { title: '邮箱',
-    dataIndex: 'email',
-    key: 'email',
-  },
-  { title: '角色',
+  { title: '昵称', dataIndex: 'nickname', key: 'nickname' },
+  { title: '手机号', dataIndex: 'phone', key: 'phone' },
+  { title: '邮箱', dataIndex: 'email', key: 'email' },
+  {
+    title: '角色',
     dataIndex: 'role',
-    key: 'role' ,
-    valueType:'radio',
-    valueEnum:{
-      0:{ text:'管理员' },
-      1:{ text:'用户' }
-    }
+    key: 'role',
+    valueType: 'radio',
+    valueEnum: {
+      0: { text: '管理员' },
+      1: { text: '用户' },
+    },
   },
-  { title: '状态',
+  {
+    title: '状态',
     dataIndex: 'status',
-    key: 'status' ,
-    valueType:'radio',
-    valueEnum:{
-      0:{ text:'正常' },
-      1:{ text:'禁用' }
-    }
+    key: 'status',
+    valueType: 'radio',
+    valueEnum: {
+      0: { text: '正常' },
+      1: { text: '禁用' },
+    },
   },
-  { title: '头像',
+  {
+    title: '头像',
     dataIndex: 'avatar_url',
-    render:(_,record)=>(
+    render: (_, record) => (
       <div>
-        <Image src={record.avatar_url} width={70} height={70}/>
+        <Image src={record.avatar_url} width={70} height={70} />
       </div>
     ),
     key: 'avatar_url',
@@ -66,12 +61,12 @@ const columns: ProColumns<API.UserAddDTO>[] = [
  *
  * @param fields
  */
-const handleUpdate = async (fields: API.UserUpdateDTO) => {
+const handleUpdate = async (fields: API.UserUpdateRequestDTO) => {
   const hide = message.loading('正在更新');
   try {
     hide();
-    const msg = await updateUsingPost(fields);
-    if (msg.status!==200){
+    const msg = await update(fields);
+    if (msg.status !== 200) {
       message.error(msg.message);
       return false;
     }
@@ -90,7 +85,7 @@ const handleUpdate = async (fields: API.UserUpdateDTO) => {
  * @constructor
  */
 const UpdateModal: React.FC<Props> = (props) => {
-  const { oldData, visible,  onSubmit, onCancel } = props;
+  const { oldData, visible, onSubmit, onCancel } = props;
 
   if (!oldData) {
     return <></>;
@@ -112,7 +107,7 @@ const UpdateModal: React.FC<Props> = (props) => {
         form={{
           initialValues: oldData,
         }}
-        onSubmit={async (values: API.UserUpdateDTO) => {
+        onSubmit={async (values: API.UserUpdateRequestDTO) => {
           const success = await handleUpdate({
             ...values,
             id: oldData.id as any,
