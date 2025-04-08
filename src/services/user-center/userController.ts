@@ -65,14 +65,6 @@ export async function login(body: API.UserLoginRequestDTO, options?: { [key: str
   });
 }
 
-/** 此处后端没有提供注释 POST /user/logout */
-export async function logout(options?: { [key: string]: any }) {
-  return request<API.BaseResponseBoolean>('/api/user/logout', {
-    method: 'POST',
-    ...(options || {}),
-  });
-}
-
 /** 此处后端没有提供注释 POST /user/register */
 export async function register(body: API.UserRegisterRequestDTO, options?: { [key: string]: any }) {
   return request<API.BaseResponseBoolean>('/api/user/register', {

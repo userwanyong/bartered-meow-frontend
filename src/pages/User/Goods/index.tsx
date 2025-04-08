@@ -189,6 +189,7 @@ const GoodsPage: React.FC = () => {
                 break;
             case 'logout':
                 // 这里添加登出逻辑
+                localStorage.removeItem('token');
                 history.push('/user/login');
                 break;
             default:
