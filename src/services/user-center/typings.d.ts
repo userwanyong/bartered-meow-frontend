@@ -1,86 +1,177 @@
 declare namespace API {
-  type BaseResponseBoolean_ = {
+  type BaseResponseBoolean = {
+    status?: number;
+    message?: string;
     data?: boolean;
-    message?: string;
-    status?: number;
   };
 
-  type BaseResponseListUserVo_ = {
-    data?: UserVo[];
-    message?: string;
+  type BaseResponseListGoodsResponseDTO = {
     status?: number;
+    message?: string;
+    data?: GoodsResponseDTO[];
   };
 
-  type BaseResponseUserVo_ = {
-    data?: UserVo;
-    message?: string;
+  type BaseResponseListTagResponseDTO = {
     status?: number;
+    message?: string;
+    data?: TagResponseDTO[];
   };
 
-  type deleteUsingPOSTParams = {
-    /** id */
+  type BaseResponseListUserResponseDTO = {
+    status?: number;
+    message?: string;
+    data?: UserResponseDTO[];
+  };
+
+  type BaseResponseUserResponseDTO = {
+    status?: number;
+    message?: string;
+    data?: UserResponseDTO;
+  };
+
+  type deleteGoodsByIdParams = {
     id: string;
   };
 
-  type listUsingGETParams = {
-    createdTime?: string;
-    email?: string;
-    gender?: number;
+  type deleteTagParams = {
+    id: string;
+  };
+
+  type deleteUsingPOSTParams = {
+    id: string;
+  };
+
+  type GoodsAddRequestDTO = {
+    state?: number;
+    user_id?: string;
+    good_name?: string;
+    good_description?: string;
+    good_pic?: string;
+    good_price?: number;
+    tag_ids?: string[];
+  };
+
+  type GoodsQueryRequestDTO = {
     id?: string;
-    nickname?: string;
-    phone?: string;
-    role?: number;
-    status?: number;
-    updatedTime?: string;
-    username?: string;
+    state?: number;
+    user_id?: string;
+    good_name?: string;
+    good_description?: string;
+    good_pic?: string;
+    good_price?: number;
+    created_time?: string;
+    updated_time?: string;
   };
 
-  type UserAddDTO = {
-    avatar_url?: string;
-    email?: string;
+  type GoodsResponseDTO = {
+    id?: string;
+    userId?: number;
+    state?: number;
+    good_name?: string;
+    good_description?: string;
+    good_pic?: string;
+    good_price?: number;
+    created_time?: string;
+    updated_time?: string;
+  };
+
+  type GoodsUpdateRequestDTO = {
+    id?: string;
+    state?: number;
+    good_name?: string;
+    good_description?: string;
+    good_pic?: string;
+    good_price?: number;
+    tag_ids?: string[];
+  };
+
+  type listGoodsByTagIdParams = {
+    tagId: string;
+  };
+
+  type listGoodsParams = {
+    goodsQueryRequestDTO: GoodsQueryRequestDTO;
+  };
+
+  type listParams = {
+    userQueryRequestDTO: UserQueryRequestDTO;
+  };
+
+  type TagAddRequestDTO = {
+    tag_name?: string;
+  };
+
+  type TagResponseDTO = {
+    id?: string;
+    tag_name?: string;
+    created_time?: string;
+    updated_time?: string;
+  };
+
+  type TagUpdateRequestDTO = {
+    id?: string;
+    tag_name?: string;
+  };
+
+  type UserAddRequestDTO = {
+    username?: string;
+    password?: string;
+    nickname?: string;
     gender?: number;
-    nickname?: string;
-    password?: string;
     phone?: string;
-    role?: number;
+    email?: string;
     status?: number;
-    username?: string;
+    role?: number;
+    avatar_url?: string;
   };
 
-  type UserLoginDTO = {
+  type UserLoginRequestDTO = {
+    username?: string;
     password?: string;
-    username?: string;
   };
 
-  type UserRegisterDTO = {
+  type UserQueryRequestDTO = {
+    id?: string;
+    username?: string;
+    nickname?: string;
+    gender?: number;
+    phone?: string;
+    email?: string;
+    status?: number;
+    role?: number;
+    created_time?: string;
+    updated_time?: string;
+  };
+
+  type UserRegisterRequestDTO = {
+    username?: string;
+    password?: string;
     check_password?: string;
-    password?: string;
-    username?: string;
   };
 
-  type UserUpdateDTO = {
-    avatar_url?: string;
-    email?: string;
-    gender?: number;
+  type UserResponseDTO = {
     id?: string;
+    username?: string;
+    password?: string;
     nickname?: string;
+    gender?: number;
     phone?: string;
-    role?: number;
+    email?: string;
     status?: number;
-  };
-
-  type UserVo = {
+    role?: number;
     avatar_url?: string;
     created_time?: string;
-    email?: string;
-    gender?: number;
+    updated_time?: string;
+  };
+
+  type UserUpdateRequestDTO = {
     id?: string;
     nickname?: string;
-    password?: string;
+    gender?: number;
     phone?: string;
-    role?: number;
+    email?: string;
     status?: number;
-    updated_time?: string;
-    username?: string;
+    role?: number;
+    avatar_url?: string;
   };
 }

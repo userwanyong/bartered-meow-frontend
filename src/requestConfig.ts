@@ -19,7 +19,6 @@ interface ResponseStructure {
   showType?: ErrorShowType;
 }
 
-
 /**
  * @name 错误处理
  * pro 自带的错误处理， 可以在这里做自己的改动
@@ -93,7 +92,6 @@ export const requestConfig: RequestConfig = {
       return config;
     },
   ],
-
 
   // 响应拦截器
   responseInterceptors: [

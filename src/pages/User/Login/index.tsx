@@ -1,5 +1,6 @@
 import { Footer } from '@/components';
 
+import { login } from '@/services/user-center/userController';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
 import { Helmet, history, Link, useModel } from '@umijs/max';
@@ -8,7 +9,6 @@ import { createStyles } from 'antd-style';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import Settings from '../../../../config/defaultSettings';
-import { loginUsingPost } from '@/services/user-center/userController';
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -47,7 +47,7 @@ const useStyles = createStyles(({ token }) => {
 });
 
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.UserLoginDTO>({});
+  const [userLoginState, setUserLoginState] = useState<API.UserLoginRequestDTO>({});
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
@@ -62,10 +62,10 @@ const Login: React.FC = () => {
       });
     }
   };
-  const handleSubmit = async (values: API.UserLoginDTO) => {
+  const handleSubmit = async (values: API.UserLoginRequestDTO) => {
     try {
       // 登录
-      const user = await loginUsingPost({
+      const user = await login({
         ...values,
         // type,
       });
@@ -111,9 +111,8 @@ const Login: React.FC = () => {
           initialValues={{
             autoLogin: true,
           }}
-
           onFinish={async (values) => {
-            await handleSubmit(values as API.UserLoginDTO);
+            await handleSubmit(values as API.UserLoginRequestDTO);
           }}
         >
           <Tabs
@@ -125,7 +124,6 @@ const Login: React.FC = () => {
                 key: 'account',
                 label: '账户密码登录',
               },
-
             ]}
           />
 
@@ -183,9 +181,9 @@ const Login: React.FC = () => {
               自动登录
             </ProFormCheckbox>
 
-            <Link to="/user/register" style={{float: 'right'}}>注册</Link>
-
-
+            <Link to="/user/register" style={{ float: 'right' }}>
+              注册
+            </Link>
           </div>
         </LoginForm>
       </div>

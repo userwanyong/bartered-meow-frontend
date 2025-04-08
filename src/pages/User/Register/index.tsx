@@ -1,14 +1,14 @@
 import { Footer } from '@/components';
 
-import {LockOutlined,UserOutlined} from '@ant-design/icons';
-import {LoginForm,ProFormText} from '@ant-design/pro-components';
+import { register } from '@/services/user-center/userController';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { Helmet, history, useModel } from '@umijs/max';
-import { Alert, message, Tabs } from 'antd';
+import { message, Tabs } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import Settings from '../../../../config/defaultSettings';
-import { registerUsingPost } from '@/services/user-center/userController';
 const useStyles = createStyles(({ token }) => {
   return {
     action: {
@@ -62,8 +62,7 @@ const Register: React.FC = () => {
   };
 
   //表单提交
-  const handleSubmit = async (values: API.UserRegisterDTO) => {
-
+  const handleSubmit = async (values: API.UserRegisterRequestDTO) => {
     //校验
     const { password, check_password } = values;
     if (password !== check_password) {
@@ -72,11 +71,11 @@ const Register: React.FC = () => {
 
     try {
       // 注册
-      const msg = await registerUsingPost({
+      const msg = await register({
         ...values,
         // type,
       });
-      
+
       if (msg.status === 200) {
         const defaultRegisterSuccessMessage = '注册成功！';
         message.success(defaultRegisterSuccessMessage);
@@ -108,9 +107,9 @@ const Register: React.FC = () => {
       >
         <LoginForm
           submitter={{
-            searchConfig:{
-              submitText:'注册'
-            }
+            searchConfig: {
+              submitText: '注册',
+            },
           }}
           contentStyle={{
             minWidth: 280,
@@ -122,9 +121,8 @@ const Register: React.FC = () => {
           initialValues={{
             autoLogin: true,
           }}
-        
           onFinish={async (values) => {
-            await handleSubmit(values as API.UserRegisterDTO);
+            await handleSubmit(values as API.UserRegisterRequestDTO);
           }}
         >
           <Tabs
@@ -136,7 +134,6 @@ const Register: React.FC = () => {
                 key: 'account',
                 label: '账户密码注册',
               },
-              
             ]}
           />
 
@@ -204,7 +201,6 @@ const Register: React.FC = () => {
               />
             </>
           )}
-
         </LoginForm>
       </div>
       <Footer />
