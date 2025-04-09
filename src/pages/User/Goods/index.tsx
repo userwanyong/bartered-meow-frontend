@@ -1,21 +1,9 @@
-import { 
-    LogoutOutlined,
-    UserOutlined,
-    HomeOutlined,
-    LockOutlined,
-    ShoppingOutlined,
-    ShopOutlined,
-    ShoppingCartOutlined,
-    OrderedListOutlined,
-    SettingOutlined,
-    ArrowLeftOutlined
-  } from '@ant-design/icons';
-import { Card, List, Image, Typography, Space, Input, Dropdown, Avatar, Menu } from 'antd';
+import UserInfo from '@/components/UserInfo';
+import { Card, List, Image, Typography, Input, Menu } from 'antd';
 import React, { useState } from 'react';
 import { createStyles } from 'antd-style';
 import { history, useModel } from '@umijs/max';
 import { listGoods, listTag, listGoodsByTagId } from '@/services/user-center/goodsController';
-import { MenuProps } from 'antd';  // 添加这个导入
 import { message } from 'antd';
 
 const { Search } = Input;
@@ -176,95 +164,6 @@ const GoodsPage: React.FC = () => {
         setSelectedTagId(tagId);
         fetchGoodsByTagId(tagId);
     };
-
-    const handleMenuClick = ({ key }: { key: string }) => {
-        switch (key) {
-            case 'first':
-                history.push('/goods');
-                break;
-            case 'profile':
-                history.push('/user/profile');
-                break;
-            case 'password':
-                history.push('/user/password');
-                break;
-            case 'buy':
-                history.push('/user/buy');
-                break;
-            case 'sell':
-                history.push('/user/sell');
-                break;
-            case 'cart':
-                history.push('/user/cart');
-                break;
-            case 'orders':
-                history.push('/user/orders');
-                break;
-            case 'manage':
-                history.push('/admin');
-                break;
-            case 'logout':
-                // 这里添加登出逻辑
-                localStorage.removeItem('token');
-                history.push('/user/login');
-                break;
-            default:
-                break;
-        }
-    };
-
-    const menuItems: MenuProps['items'] = [
-        {
-            key: 'first',
-            icon: <HomeOutlined  />,
-            label: '首页',
-        },
-        {
-            key: 'profile',
-            icon: <UserOutlined />,
-            label: '个人中心',
-        },
-        {
-            key: 'password',
-            icon: <LockOutlined  />,
-            label: '修改密码',
-        },
-        {
-            key: 'buy',
-            icon: <ShoppingOutlined  />,
-            label: '我要买',
-        },
-        {
-            key: 'sell',
-            icon: <ShopOutlined  />,
-            label: '我要卖',
-        },
-        {
-            key: 'cart',
-            icon: <ShoppingCartOutlined  />,
-            label: '我的购物车',
-        },
-        {
-            key: 'orders',
-            icon: <OrderedListOutlined  />,
-            label: '我的订单',
-        },
-        // 只有管理员（role === 0）才显示后台管理选项
-        ...(currentUser?.role === 0 ? [{
-            key: 'manage',
-            icon: <SettingOutlined />,
-            label: '后台管理',
-        }] : []),
-        {
-            type: 'divider' as const,
-        },
-        {
-            key: 'logout',
-            icon: <LogoutOutlined />,
-            label: '退出登录',
-        },
-    ];
-
     // 在 GoodsPage 组件的 return 中修改布局：
     return (
         <div>
@@ -278,33 +177,7 @@ const GoodsPage: React.FC = () => {
                         onSearch={onSearch}
                     />
                 </div>
-                <div className={styles.userInfo}>
-                    {currentUser ? (
-                        <Dropdown
-                            menu={{
-                                items: menuItems,
-                                onClick: handleMenuClick,
-                            }}
-                            placement="bottomRight"
-                        >
-                            <Space>
-                                <Avatar
-                                    size="large"
-                                    src={currentUser.avatar_url}
-                                    icon={!currentUser.avatar_url && <UserOutlined />}
-                                />
-                                <Text className={styles.username}>
-                                    {currentUser.nickname}
-                                </Text>
-                            </Space>
-                        </Dropdown>
-                    ) : (
-                        <Space onClick={() => history.push('/user/login')} style={{ cursor: 'pointer' }}>
-                            <Avatar size="large" icon={<UserOutlined />} />
-                            <Text className={styles.username}>登录</Text>
-                        </Space>
-                    )}
-                </div>
+                <UserInfo />
             </div>
 
             <div className={styles.container}>

@@ -1,20 +1,9 @@
-import { 
-    LogoutOutlined,
-    UserOutlined,
-    HomeOutlined,
-    LockOutlined,
-    ShoppingOutlined,
-    ShopOutlined,
-    ShoppingCartOutlined,
-    OrderedListOutlined,
-    SettingOutlined,
-  } from '@ant-design/icons';
 import React, { useState } from 'react';
-import { Card, Form, Input, Button, message, Select, Typography, Avatar, Space, Dropdown, Menu } from 'antd';
-import { useModel, history } from '@umijs/max';
+import { Card, Form, Input, Button, message, Select, Typography } from 'antd';
+import { useModel } from '@umijs/max';
 import { update } from '@/services/user-center/userController';
 import { createStyles } from 'antd-style';
-import type { MenuProps } from 'antd';
+import UserInfo from '@/components/UserInfo';  // 添加这行
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -126,126 +115,13 @@ const ProfilePage: React.FC = () => {
         setLoading(false);
     };
 
-    // 添加菜单点击处理函数
-    const handleMenuClick = ({ key }: { key: string }) => {
-        switch (key) {
-            case 'first':
-                history.push('/goods');
-                break;
-            case 'profile':
-                history.push('/user/profile');
-                break;
-            case 'password':
-                history.push('/user/password');
-                break;
-            case 'buy':
-                history.push('/user/buy');
-                break;
-            case 'sell':
-                history.push('/user/sell');
-                break;
-            case 'cart':
-                history.push('/user/cart');
-                break;
-            case 'orders':
-                history.push('/user/orders');
-                break;
-            case 'manage':
-                history.push('/admin');
-                break;
-            case 'logout':
-                localStorage.removeItem('token');
-                history.push('/user/login');
-                break;
-            default:
-                break;
-        }
-    };
 
-    const menuItems: MenuProps['items'] = [
-        {
-            key: 'first',
-            icon: <HomeOutlined  />,
-            label: '首页',
-        },
-        {
-            key: 'profile',
-            icon: <UserOutlined />,
-            label: '个人中心',
-        },
-        {
-            key: 'password',
-            icon: <LockOutlined  />,
-            label: '修改密码',
-        },
-        {
-            key: 'buy',
-            icon: <ShoppingOutlined  />,
-            label: '我要买',
-        },
-        {
-            key: 'sell',
-            icon: <ShopOutlined  />,
-            label: '我要卖',
-        },
-        {
-            key: 'cart',
-            icon: <ShoppingCartOutlined  />,
-            label: '我的购物车',
-        },
-        {
-            key: 'orders',
-            icon: <OrderedListOutlined  />,
-            label: '我的订单',
-        },
-        ...(currentUser?.role === 0 ? [{
-            key: 'manage',
-            icon: <SettingOutlined />,
-            label: '后台管理',
-        }] : []),
-        {
-            type: 'divider' as const,
-        },
-        {
-            key: 'logout',
-            icon: <LogoutOutlined />,
-            label: '退出登录',
-        },
-    ];
 
     return (
         <div>
-            {/* 添加顶部栏 */}
             <div className={styles.topBar}>
-                <div className={styles.userInfo}>
-                    {currentUser ? (
-                        <Dropdown
-                            menu={{
-                                items: menuItems,
-                                onClick: handleMenuClick,
-                            }}
-                            placement="bottomRight"
-                        >
-                            <Space>
-                                <Avatar
-                                    size="large"
-                                    src={currentUser.avatar_url}
-                                    icon={!currentUser.avatar_url && <UserOutlined />}
-                                />
-                                <Text className={styles.username}>
-                                    {currentUser.nickname}
-                                </Text>
-                            </Space>
-                        </Dropdown>
-                    ) : (
-                        <Space onClick={() => history.push('/user/login')} style={{ cursor: 'pointer' }}>
-                            <Avatar size="large" icon={<UserOutlined />} />
-                            <Text className={styles.username}>登录</Text>
-                        </Space>
-                    )}
-                </div>
+                <UserInfo />
             </div>
-
             {/* 原有的内容 */}
             <div className={styles.container}>
                 <Card title="个人信息修改">
@@ -272,10 +148,10 @@ const ProfilePage: React.FC = () => {
                         }}
                     >
                         {form.getFieldValue('avatar_url') || currentUser?.avatar_url ? (
-                            <img 
-                                src={form.getFieldValue('avatar_url') || currentUser?.avatar_url} 
-                                alt="avatar" 
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            <img
+                                src={form.getFieldValue('avatar_url') || currentUser?.avatar_url}
+                                alt="avatar"
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />
                         ) : (
                             <div>
