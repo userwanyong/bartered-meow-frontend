@@ -17,7 +17,12 @@ export default [
     component: './User/Goods',
     layout: false,
   },
-
+  {
+    path: '/user/profile',
+    name: '个人中心',
+    component: './User/Profile',
+    layout: false,
+  },
   {
     path: '/admin',
     name: '管理页',

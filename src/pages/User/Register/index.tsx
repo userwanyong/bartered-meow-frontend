@@ -79,15 +79,17 @@ const Register: React.FC = () => {
       if (msg.status === 200) {
         const defaultRegisterSuccessMessage = '注册成功！';
         message.success(defaultRegisterSuccessMessage);
-        await fetchUserInfo();
+        // await fetchUserInfo();
         history.push('/user/login');
         return;
+      }else{
+        message.error(msg.message); 
       }
       // 如果失败去设置用户错误信息
       // setUserLoginState(msg);
     } catch (error) {
       const defaultRegisterFailureMessage = '注册失败，请重试！';
-      console.log(error);
+      // console.log(error);
       message.error(defaultRegisterFailureMessage);
     }
   };

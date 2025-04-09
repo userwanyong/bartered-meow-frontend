@@ -1,5 +1,15 @@
-import { logout } from '@/services/user-center/userController';
-import { LogoutOutlined } from '@ant-design/icons';
+// import { logout } from '@/services/user-center/userController';
+import { 
+  LogoutOutlined,
+  UserOutlined,
+  HomeOutlined,
+  LockOutlined,
+  ShoppingOutlined,
+  ShopOutlined,
+  ShoppingCartOutlined,
+  OrderedListOutlined,
+  SettingOutlined 
+} from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import { createStyles } from 'antd-style';
@@ -43,7 +53,8 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
    * 退出登录，并且将当前的 url 保存
    */
   const loginOut = async () => {
-    await logout();
+    // await logout();
+    localStorage.removeItem('token');
     const { search, pathname } = window.location;
     const urlParams = new URL(window.location.href).searchParams;
     /** 此方法会跳转到 redirect 参数所在的位置 */
@@ -62,20 +73,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
 
   const { initialState, setInitialState } = useModel('@@initialState');
 
-  const onMenuClick = useCallback(
-    (event: MenuInfo) => {
-      const { key } = event;
-      if (key === 'logout') {
-        flushSync(() => {
-          setInitialState((s) => ({ ...s, currentUser: undefined }));
-        });
-        loginOut();
-        return;
-      }
-      history.push(`/account/${key}`);
-    },
-    [setInitialState],
-  );
+
 
   const loading = (
     <span className={styles.action}>
@@ -101,18 +99,95 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
 
   const menuItems = [
     {
+      key: 'first',
+      icon: <HomeOutlined />,
+      label: '首页',
+    },
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: '个人中心',
+    },
+    {
+      key: 'password',
+      icon: <LockOutlined />,
+      label: '修改密码',
+    },
+    {
+      key: 'buy',
+      icon: <ShoppingOutlined />,
+      label: '我要买',
+    },
+    {
+      key: 'sell',
+      icon: <ShopOutlined />,
+      label: '我要卖',
+    },
+    {
+      key: 'cart',
+      icon: <ShoppingCartOutlined />,
+      label: '我的购物车',
+    },
+    {
+      key: 'orders',
+      icon: <OrderedListOutlined />,
+      label: '我的订单',
+    },
+    {
+      type: 'divider',
+    },
+    {
       key: 'logout',
       icon: <LogoutOutlined />,
       label: '退出登录',
     },
   ];
 
+  const onMenuClick = useCallback(
+    (event: MenuInfo) => {
+      const { key } = event;
+      switch (key) {
+        case 'first':
+          history.push('/goods');
+          break;
+        case 'profile':
+          history.push('/user/profile');
+          break;
+        case 'password':
+          history.push('/user/password');
+          break;
+        case 'buy':
+          history.push('/user/buy');
+          break;
+        case 'sell':
+          history.push('/user/sell');
+          break;
+        case 'cart':
+          history.push('/user/cart');
+          break;
+        case 'orders':
+          history.push('/user/orders');
+          break;
+        case 'logout':
+          flushSync(() => {
+            setInitialState((s) => ({ ...s, currentUser: undefined }));
+          });
+          localStorage.removeItem('token');
+          history.push('/user/login');
+          break;
+        default:
+          break;
+      }
+    },
+    [setInitialState],
+  );
+
   return (
     <HeaderDropdown
       menu={{
         selectedKeys: [],
         onClick: onMenuClick,
-        items: menuItems,
+        items: menuItems as any,
       }}
     >
       {children}
