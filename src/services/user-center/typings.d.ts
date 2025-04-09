@@ -23,6 +23,12 @@ declare namespace API {
     data?: UserResponseDTO[];
   };
 
+  type BaseResponseString = {
+    status?: number;
+    message?: string;
+    data?: string;
+  };
+
   type BaseResponseUserResponseDTO = {
     status?: number;
     message?: string;
@@ -111,6 +117,10 @@ declare namespace API {
   type TagUpdateRequestDTO = {
     id?: string;
     tag_name?: string;
+  };
+
+  type uploadParams = {
+    file: string;
   };
 
   type UserAddRequestDTO = {

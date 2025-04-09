@@ -144,6 +144,7 @@ export default defineConfig({
       requestLibPath: "import { request } from '@umijs/max'",
       schemaPath: 'http://localhost:8066/api/v3/api-docs',
       projectName: 'user-center',
+      apiPrefix: 'API_PREFIX',
     },
   ],
 

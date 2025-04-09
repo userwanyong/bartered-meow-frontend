@@ -1,8 +1,10 @@
 import { add } from '@/services/user-center/userController';
 import { ProColumns, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { message, Modal } from 'antd';
+import { message, Modal, Upload } from 'antd';
 import React from 'react';
+import { upload } from '@/services/user-center/fileController';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 
 interface Props {
   visible: boolean;
@@ -52,9 +54,69 @@ const columns: ProColumns<API.UserAddRequestDTO>[] = [
     title: '头像',
     dataIndex: 'avatar_url',
     key: 'avatar_url',
-    initialValue: 'https://qbp-file.oss-cn-beijing.aliyuncs.com/default.jpg',
+    renderFormItem: () => {
+      return <AvatarUploader />;
+    },
   },
 ];
+
+// Add this new component for handling avatar upload
+const AvatarUploader: React.FC<any> = ({ value, onChange }) => {
+  const [loading, setLoading] = React.useState(false);
+  const [imageUrl, setImageUrl] = React.useState<string>(value);
+
+  const handleUpload = async (file: File) => {
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await upload(formData);
+      if (res.status === 200 && res.message) {
+        setImageUrl(res.message);
+        onChange?.(res.message);
+        message.success("上传成功");
+      } else {
+        message.error(res.message);
+      }
+    } catch (error: any) {
+      message.error('上传失败：' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Upload
+      name="file"
+      listType="picture-card"
+      showUploadList={false}
+      accept="image/*"  // 添加这行
+      beforeUpload={(file) => {
+        // 验证文件类型
+        const isImage = file.type.startsWith('image/');
+        if (!isImage) {
+          message.error('只能上传图片文件！');
+          return false;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          message.error('图片大小不能超过 5MB');
+          return false;
+        }
+        handleUpload(file);
+        return false;
+      }}
+    >
+      {imageUrl ? (
+        <img src={imageUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      ) : (
+        <div>
+          {loading ? <LoadingOutlined /> : <PlusOutlined />}
+          <div style={{ marginTop: 8 }}>上传</div>
+        </div>
+      )}
+    </Upload>
+  );
+};
 /**
  * 添加节点
  * @param fields
@@ -94,6 +156,7 @@ const CreateModal: React.FC<Props> = (props) => {
       onCancel={() => {
         onCancel?.();
       }}
+      width={700}  // 添加宽度设置
     >
       <ProTable
         type="form"
@@ -104,6 +167,7 @@ const CreateModal: React.FC<Props> = (props) => {
             onSubmit?.(values);
           }
         }}
+        style={{ maxWidth: '100%' }}  // 添加样式确保表单填充可用空间
       />
     </Modal>
   );
