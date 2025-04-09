@@ -65,23 +65,25 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: API.UserLoginRequestDTO) => {
     try {
       // 登录
-      const user = await login({
+      const msg = await login({
         ...values,
         // type,
       });
-      if (user) {
+      if (msg.status === 200) {
         const defaultLoginSuccessMessage = '登录成功！';
         // 保存 token 到 localStorage
-        localStorage.setItem('token', user.data?.token || '');
+        localStorage.setItem('token', msg.data?.token || '');
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
         history.push(urlParams.get('redirect') || '/');
         return;
+      }else{
+        message.error(msg.message);
       }
 
       // 如果失败去设置用户错误信息
-      setUserLoginState(user);
+      // setUserLoginState(user);
     } catch (error) {
       const defaultLoginFailureMessage = '登录失败，请重试！';
       console.log(error);

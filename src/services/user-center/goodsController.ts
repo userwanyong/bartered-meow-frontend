@@ -1,6 +1,7 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from '@umijs/max';
+import { API_PREFIX } from '../../../config/api';
 
 /** 此处后端没有提供注释 GET /goods */
 export async function listGoodsByTagId(
@@ -8,7 +9,7 @@ export async function listGoodsByTagId(
   params: API.listGoodsByTagIdParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseListGoodsResponseDTO>('/api/goods', {
+  return request<API.BaseResponseListGoodsResponseDTO>(`${API_PREFIX}/goods`, {
     method: 'GET',
     params: {
       ...params,
@@ -19,7 +20,7 @@ export async function listGoodsByTagId(
 
 /** 此处后端没有提供注释 POST /goods/add */
 export async function addGoods(body: API.GoodsAddRequestDTO, options?: { [key: string]: any }) {
-  return request<API.BaseResponseBoolean>('/api/goods/add', {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/goods/add`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -36,7 +37,7 @@ export async function deleteGoodsById(
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.BaseResponseBoolean>(`/api/goods/delete/${param0}`, {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/goods/delete/${param0}`, {
     method: 'POST',
     params: { ...queryParams },
     ...(options || {}),
@@ -49,7 +50,7 @@ export async function listGoods(
   params: API.listGoodsParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseListGoodsResponseDTO>('/api/goods/list', {
+  return request<API.BaseResponseListGoodsResponseDTO>(`${API_PREFIX}/goods/list`, {
     method: 'GET',
     params: {
       ...params,
@@ -62,7 +63,7 @@ export async function listGoods(
 
 /** 此处后端没有提供注释 POST /goods/tag/add */
 export async function addTag(body: API.TagAddRequestDTO, options?: { [key: string]: any }) {
-  return request<API.BaseResponseBoolean>('/api/goods/tag/add', {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/goods/tag/add`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -79,7 +80,7 @@ export async function deleteTag(
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.BaseResponseBoolean>(`/api/goods/tag/delete/${param0}`, {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/goods/tag/delete/${param0}`, {
     method: 'POST',
     params: { ...queryParams },
     ...(options || {}),
@@ -88,7 +89,7 @@ export async function deleteTag(
 
 /** 此处后端没有提供注释 GET /goods/tag/list */
 export async function listTag(options?: { [key: string]: any }) {
-  return request<API.BaseResponseListTagResponseDTO>('/api/goods/tag/list', {
+  return request<API.BaseResponseListTagResponseDTO>(`${API_PREFIX}/goods/tag/list`, {
     method: 'GET',
     ...(options || {}),
   });
@@ -96,7 +97,7 @@ export async function listTag(options?: { [key: string]: any }) {
 
 /** 此处后端没有提供注释 POST /goods/tag/update */
 export async function updateTag(body: API.TagUpdateRequestDTO, options?: { [key: string]: any }) {
-  return request<API.BaseResponseBoolean>('/api/goods/tag/update', {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/goods/tag/update`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -111,7 +112,7 @@ export async function updateGoods(
   body: API.GoodsUpdateRequestDTO,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseBoolean>('/api/goods/update', {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/goods/update`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

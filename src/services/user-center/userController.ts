@@ -1,10 +1,11 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from '@umijs/max';
+import { API_PREFIX } from '../../../config/api';
 
 /** 此处后端没有提供注释 POST /user/add */
 export async function add(body: API.UserAddRequestDTO, options?: { [key: string]: any }) {
-  return request<API.BaseResponseBoolean>('/api/user/add', {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/user/add`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -16,7 +17,7 @@ export async function add(body: API.UserAddRequestDTO, options?: { [key: string]
 
 /** 此处后端没有提供注释 GET /user/current */
 export async function getCurrentUser(options?: { [key: string]: any }) {
-  return request<API.BaseResponseUserResponseDTO>('/api/user/current', {
+  return request<API.BaseResponseUserResponseDTO>(`${API_PREFIX}/user/current`, {
     method: 'GET',
     ...(options || {}),
   });
@@ -29,7 +30,7 @@ export async function deleteUsingPost(
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
-  return request<API.BaseResponseBoolean>(`/api/user/delete/${param0}`, {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/user/delete/${param0}`, {
     method: 'POST',
     params: { ...queryParams },
     ...(options || {}),
@@ -42,7 +43,7 @@ export async function list(
   params: API.listParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseListUserResponseDTO>('/api/user/list', {
+  return request<API.BaseResponseListUserResponseDTO>(`${API_PREFIX}/user/list`, {
     method: 'GET',
     params: {
       ...params,
@@ -55,7 +56,7 @@ export async function list(
 
 /** 此处后端没有提供注释 POST /user/login */
 export async function login(body: API.UserLoginRequestDTO, options?: { [key: string]: any }) {
-  return request<API.BaseResponseUserResponseDTO>('/api/user/login', {
+  return request<API.BaseResponseUserResponseDTO>(`${API_PREFIX}/user/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -67,7 +68,7 @@ export async function login(body: API.UserLoginRequestDTO, options?: { [key: str
 
 /** 此处后端没有提供注释 POST /user/register */
 export async function register(body: API.UserRegisterRequestDTO, options?: { [key: string]: any }) {
-  return request<API.BaseResponseBoolean>('/api/user/register', {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/user/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -79,7 +80,7 @@ export async function register(body: API.UserRegisterRequestDTO, options?: { [ke
 
 /** 此处后端没有提供注释 POST /user/update */
 export async function update(body: API.UserUpdateRequestDTO, options?: { [key: string]: any }) {
-  return request<API.BaseResponseBoolean>('/api/user/update', {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/user/update`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
