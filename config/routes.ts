@@ -31,6 +31,7 @@ export default [
     routes: [
       { path: '/admin', redirect: '/admin/user-manger' }, //进入这个下拉菜单默认指向该菜单栏下的哪一项
       { path: '/admin/user-manger', name: '用户管理', component: './Admin/UserManger' },
+      { path: '/admin/good-manager', name: '商品管理', component: './Admin/GoodManager' },
     ],
   },
 

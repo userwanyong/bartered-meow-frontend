@@ -109,8 +109,8 @@ const Login: React.FC = () => {
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src="/logo.svg" />}
-          title="用户中心"
+          logo={<img alt="logo" src="/logo.png" />}
+          title="交易喵"
           subTitle={'    '}
           initialValues={{
             autoLogin: true,
