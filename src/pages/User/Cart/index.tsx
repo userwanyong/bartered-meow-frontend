@@ -3,14 +3,16 @@ import {
   MinusOutlined,
   PlusOutlined,
   ShoppingCartOutlined,
+  ExclamationCircleOutlined
 } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { history } from '@umijs/max';
+import { Modal } from 'antd';
 import { Card, Image, Typography, Button, Space, Divider, message, Table, InputNumber, Empty, Checkbox } from 'antd';
 import { createStyles } from 'antd-style';
 import UserInfo from '@/components/UserInfo';
 import type { ColumnsType } from 'antd/es/table';
-import { list1, delete1, update1 } from '@/services/user-center/cartController';
+import { listCart, deleteCart, updateCart } from '@/services/user-center/cartController';
 
 const { Title, Text } = Typography;
 
@@ -94,7 +96,7 @@ const Cart: React.FC = () => {
   const fetchCartItems = async () => {
     setLoading(true);
     try {
-      const response = await list1();
+      const response = await listCart();
       if (response.data && Array.isArray(response.data)) {
         // 为每个商品添加选中状态属性
         const itemsWithSelected = response.data.map((item: API.CartResponseDTO) => ({
@@ -131,21 +133,21 @@ const Cart: React.FC = () => {
   // 更新购物车商品数量
   const handleQuantityChange = async (id: string, quantity: number) => {
     if (quantity < 1) return;
-    
+
     try {
       // 获取当前购物车项
       const currentItem = cartItems.find(item => item.id === id);
       if (!currentItem) return;
-      
+
       // 先更新UI
-      setCartItems(prevItems => 
-        prevItems.map(item => 
+      setCartItems(prevItems =>
+        prevItems.map(item =>
           item.id === id ? { ...item, num: quantity } : item
         )
       );
-      
+
       // 调用后端API更新数量
-      const response = await update1({
+      const response = await updateCart({
         id,
         num: quantity,
         // 从购物车项中获取用户ID和商品ID
@@ -154,7 +156,7 @@ const Cart: React.FC = () => {
       });
       if (response.status === 1014) {
         message.warning(response.message);
-      }else if (response.status !== 200) {
+      } else if (response.status !== 200) {
         message.error(response.message);
       }
     } catch (error) {
@@ -168,7 +170,7 @@ const Cart: React.FC = () => {
   // 从购物车中移除商品
   const handleRemoveItem = async (id: string) => {
     try {
-      const response = await delete1({ id });
+      const response = await deleteCart({ id });
       if (response.status === 200) {
         // 更新本地状态
         setCartItems(prevItems => prevItems.filter(item => item.id !== id));
@@ -184,8 +186,17 @@ const Cart: React.FC = () => {
 
   // 选择/取消选择单个商品
   const handleSelectItem = (id: string, selected: boolean) => {
-    setCartItems(prevItems => 
-      prevItems.map(item => 
+    // 获取当前商品
+    const currentItem = cartItems.find(item => item.id === id);
+
+    // 如果商品库存为0或负数，且尝试选中它，则显示提示并返回
+    if (selected && currentItem && (currentItem.goods?.current_count as number) <= 0) {
+      message.warning('该商品已售罄，无法选择');
+      return;
+    }
+
+    setCartItems(prevItems =>
+      prevItems.map(item =>
         item.id === id ? { ...item, selected } : item
       )
     );
@@ -195,7 +206,7 @@ const Cart: React.FC = () => {
   const handleSelectAll = (e: any) => {
     const checked = e.target.checked;
     setSelectAll(checked);
-    setCartItems(prevItems => 
+    setCartItems(prevItems =>
       prevItems.map(item => ({ ...item, selected: checked }))
     );
   };
@@ -208,32 +219,46 @@ const Cart: React.FC = () => {
       return;
     }
 
-    try {
-      // 使用Promise.all并行处理多个删除请求
-      await Promise.all(
-        selectedItems.map(item => delete1({ id: item.id as any }))
-      );
-      
-      // 更新本地状态
-      setCartItems(prevItems => prevItems.filter(item => !item.selected));
-      message.success('已删除选中商品');
-    } catch (error) {
-      message.error('删除选中商品失败');
-      console.error('删除选中商品失败:', error);
-      // 如果API调用失败，重新获取购物车数据
-      fetchCartItems();
-    }
+    Modal.confirm({
+      title: '确认批量删除购物车数据',
+      icon: <ExclamationCircleOutlined />,
+      content: `确定要删除选中的 ${selectedItems.length} 个商品吗？删除后将无法恢复。`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          // 使用Promise.all并行处理多个删除请求
+          await Promise.all(
+            selectedItems.map(item => deleteCart({ id: item.id as any }))
+          );
+
+          // 更新本地状态
+          setCartItems(prevItems => prevItems.filter(item => !item.selected));
+          message.success('已删除选中商品');
+        } catch (error) {
+          message.error('删除选中商品失败');
+          console.error('删除选中商品失败:', error);
+          // 如果API调用失败，重新获取购物车数据
+          fetchCartItems();
+        }
+      }
+    });
   };
 
+  // 修改结算按钮的处理函数
   const handleCheckout = () => {
-    const selectedItems = cartItems.filter(item => item.selected);
+    // 过滤出选中且有库存的商品
+    const selectedItems = cartItems.filter(item =>
+      item.selected && (item.goods?.current_count as number) > 0
+    );
+
     if (selectedItems.length === 0) {
       message.warning('请至少选择一件商品');
       return;
     }
-    
-    // 这里可以添加结算逻辑，例如跳转到结算页面
-    message.info('结算功能即将上线');
+
+    // 跳转到结算页面，并传递选中的商品
+    history.push('/user/orders/checkout', { selectedItems });
   };
 
   const calculateTotal = () => {
@@ -245,14 +270,21 @@ const Cart: React.FC = () => {
   // 表格列定义
   const columns: ColumnsType<CartItem> = [
     {
-      title: '选择',
+      title: () => (
+        <Checkbox
+          checked={selectAll}
+          onChange={handleSelectAll}
+          disabled={cartItems.length === 0}
+        />
+      ),
       dataIndex: 'selected',
       key: 'selected',
-      width: 80,
+      width: 60,
       render: (_, record) => (
-        <Checkbox 
-          checked={record.selected} 
-          onChange={(e) => handleSelectItem(record.id as any, e.target.checked)} 
+        <Checkbox
+          checked={record.selected}
+          onChange={(e) => handleSelectItem(record.id as any, e.target.checked)}
+          disabled={(record.goods?.current_count as number) <= 0} // 当库存为0或负数时禁用选择框
         />
       ),
     },
@@ -283,31 +315,41 @@ const Cart: React.FC = () => {
       render: (_, record) => (
         <Text className={record.goods?.good_price as any}>¥ {(record.goods?.good_price as any * (record.num as any)).toFixed(2)}</Text>
       ),
-    },          
-    {                                                                                                                                                                           
+    },
+    {
       title: '数量',
       dataIndex: 'quantity',
       key: 'quantity',
       width: 150,
       render: (_, record) => (
         <div>
-          <Button 
-            icon={<MinusOutlined />} 
-            onClick={() => handleQuantityChange(record.id as any, record.num as any - 1)}
-            disabled={(record.num as number) <= 1}
-          />
-          <InputNumber
-            min={1}
-            max={record.goods?.current_count}
-            value={record.num}
-            onChange={(value) => handleQuantityChange(record.id as any, value as number)}
-            style={{ margin: '0 5px', width: '30px' }}
-          />
-          <Button 
-            icon={<PlusOutlined />} 
-            onClick={() => handleQuantityChange(record.id as any, record.num as any + 1)}
-            disabled={(record.num as number) >= (record.goods?.current_count as number)}
-          />
+          {(record.goods?.current_count as number) <= 0 ? (
+            // 商品已售罄，显示售罄标签
+            <Text type="danger" style={{ fontWeight: 'bold' }}>
+              已售罄
+            </Text>
+          ) : (
+            // 商品有库存，显示数量选择控件
+            <>
+              <Button
+                icon={<MinusOutlined />}
+                onClick={() => handleQuantityChange(record.id as any, record.num as any - 1)}
+                disabled={(record.num as number) <= 1}
+              />
+              <InputNumber
+                min={1}
+                max={record.goods?.current_count}
+                value={record.num}
+                onChange={(value) => handleQuantityChange(record.id as any, value as number)}
+                style={{ margin: '0 5px', width: '30px' }}
+              />
+              <Button
+                icon={<PlusOutlined />}
+                onClick={() => handleQuantityChange(record.id as any, record.num as any + 1)}
+                disabled={(record.num as number) >= (record.goods?.current_count as number)}
+              />
+            </>
+          )}
         </div>
       ),
     },
@@ -324,9 +366,9 @@ const Cart: React.FC = () => {
       key: 'action',
       width: 100,
       render: (_, record) => (
-        <Button 
-          type="text" 
-          danger 
+        <Button
+          type="text"
+          danger
           icon={<DeleteOutlined />}
           onClick={() => handleRemoveItem(record.id as any)}
         >
@@ -341,78 +383,75 @@ const Cart: React.FC = () => {
       <div className={styles.topBar}>
         <UserInfo />
       </div>
-      
+
       <div className={styles.container}>
-        <Card className={styles.mainCard}>
-          <Title level={4}>
-            <ShoppingCartOutlined style={{ marginRight: 8 }} />
-            我的购物车
-          </Title>
-          
-          <Divider />
-          
-          {cartItems.length > 0 ? (
-            <>
-              <div style={{ 
-                padding: '0 8px 16px', 
-                display: 'flex', 
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <Checkbox checked={selectAll} onChange={handleSelectAll}>全选</Checkbox>
-                <Button 
-                  type="text" 
-                  danger 
-                  icon={<DeleteOutlined />}
-                  onClick={handleDeleteSelected}
-                  loading={loading}
-                >
-                  删除选中商品
-                </Button>
-              </div>
-              
-              <Table
-                rowKey="id"
-                columns={columns}
-                dataSource={cartItems}
-                pagination={false}
-                bordered={false}
+
+
+
+        {cartItems.length > 0 ? (
+          <>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <Title level={4}>
+                <ShoppingCartOutlined style={{ marginRight: 8 }} />
+                我的购物车
+              </Title>
+
+              <Button
+                type="primary"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={handleDeleteSelected}
+                disabled={cartItems.filter(item => item.selected).length === 0}
                 loading={loading}
-              />
-              
-              <div className={styles.checkoutSection}>
+              >
+                批量删除 {cartItems.filter(item => item.selected).length > 0 ? `(${cartItems.filter(item => item.selected).length})` : ''}
+              </Button>
+            </div>
+
+            <Divider />
+
+            <Table
+              rowKey="id"
+              columns={columns}
+              dataSource={cartItems}
+              pagination={false}
+              bordered={false}
+              loading={loading}
+            />
+
+            <div className={styles.checkoutSection}>
+              <div>
                 <div>
-                  <div>
-                    已选商品 <Text strong>{cartItems.filter(item => item.selected).length}</Text> 件
-                  </div>
-                </div>
-                <div>
-                  <Space size="large">
-                    <div>
-                      合计: <Text className={styles.totalPrice}>¥ {calculateTotal().toFixed(2)}</Text>
-                    </div>
-                    <Button type="primary" size="large" onClick={handleCheckout} loading={loading}>
-                      结算
-                    </Button>
-                  </Space>
+                  已选商品 <Text strong>{cartItems.filter(item => item.selected).length}</Text> 件
                 </div>
               </div>
-            </>
-          ) : (
-            <div className={styles.emptyContainer}>
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={loading ? "正在加载..." : "购物车空空如也，快去选购商品吧！"}
-              >
-                {!loading && (
-                  <Button type="primary" onClick={handleBack}>
-                    去购物
+              <div>
+                <Space size="large">
+                  <div>
+                    合计: <Text className={styles.totalPrice}>¥ {calculateTotal().toFixed(2)}</Text>
+                  </div>
+                  <Button type="primary" size="large" onClick={handleCheckout} loading={loading}>
+                    结算
                   </Button>
-                )}
-              </Empty>
+                </Space>
+              </div>
             </div>
-          )}
-        </Card>
+          </>
+        ) : (
+          <div className={styles.emptyContainer}>
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={loading ? "正在加载..." : "购物车空空如也，快去选购商品吧！"}
+            >
+              {!loading && (
+                <Button type="primary" onClick={handleBack}>
+                  去购物
+                </Button>
+              )}
+            </Empty>
+          </div>
+        )}
+
       </div>
     </div>
   );

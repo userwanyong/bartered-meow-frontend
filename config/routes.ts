@@ -49,4 +49,15 @@ export default [
     name: '购物车',
     layout: false,
   },
+  {
+    path: '/user/orders',
+    component: './User/Order',
+    name: '订单',
+    layout: false,
+  },
+  {
+    path: '/user/orders/checkout',
+    component: './User/Order/checkout',
+    layout: false,
+  }
 ];

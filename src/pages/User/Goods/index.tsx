@@ -108,7 +108,9 @@ const GoodsPage: React.FC = () => {
                 } as API.GoodsQueryRequestDTO
             });
             if (res.data) {
-                setGoodsList(res.data);
+                // 过滤掉库存为0的商品
+                const availableGoods = res.data.filter(item => (item.current_count || 0) > 0);
+                setGoodsList(availableGoods);
             }
         } catch (error: any) {
             // 需要先导入 message 组件
@@ -125,7 +127,9 @@ const GoodsPage: React.FC = () => {
                 tagId: tagId
             });
             if (res.data) {
-                setGoodsList(res.data);
+                // 过滤掉库存为0的商品
+                const availableGoods = res.data.filter(item => (item.current_count || 0) > 0);
+                setGoodsList(availableGoods);
             }
         } catch (error: any) {
             message.error('获取分类商品失败：' + error.message);

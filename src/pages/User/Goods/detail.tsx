@@ -7,7 +7,7 @@ import { useLocation, history, useParams, useModel } from '@umijs/max';
 import { Card, Image, Typography, Descriptions, Button, Space, Divider, message, Input } from 'antd';
 import { createStyles } from 'antd-style';
 import UserInfo from '@/components/UserInfo';
-import { add1 } from '@/services/user-center/cartController';
+import { addCart } from '@/services/user-center/cartController';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -114,12 +114,24 @@ const GoodsDetail: React.FC = () => {
   };
 
   const handleBuy = () => {
+    // 检查商品是否有库存
+    if (!goodsDetail || (goodsDetail.current_count as any) <= 0) {
+      message.warning('该商品已售罄');
+      return;
+    }
+    
     // 这里添加购买逻辑
     message.info('购买功能即将上线');
   };
 
   const handleAddToCart = async () => {
     if (!goodsDetail) return;
+    
+    // 检查商品是否有库存
+    if ((goodsDetail.current_count as any) <= 0) {
+      message.warning('该商品已售罄');
+      return;
+    }
     
     // 检查用户是否已登录
     if (!currentUser || !currentUser.id) {
@@ -131,7 +143,7 @@ const GoodsDetail: React.FC = () => {
     setLoading(true);
     try {
       // 调用后端API添加商品到购物车
-      const response = await add1({
+      const response = await addCart({
         good_id: goodsDetail.id, // 将商品ID转换为数字类型
         user_id: currentUser.id, // 从当前登录用户信息中获取userId
         num: 1, // 默认添加1个
