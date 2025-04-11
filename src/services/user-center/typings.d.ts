@@ -5,6 +5,12 @@ declare namespace API {
     data?: boolean;
   };
 
+  type BaseResponseListCartResponseDTO = {
+    status?: number;
+    message?: string;
+    data?: CartResponseDTO[];
+  };
+
   type BaseResponseListGoodsResponseDTO = {
     status?: number;
     message?: string;
@@ -35,6 +41,27 @@ declare namespace API {
     data?: UserResponseDTO;
   };
 
+  type CartAddRequestDTO = {
+    id?: string;
+    num?: number;
+    good_id?: string;
+    user_id?: string;
+  };
+
+  type CartResponseDTO = {
+    id?: string;
+    num?: number;
+    goods?: GoodsResponseDTO;
+    good_id?: string;
+    user_id?: string;
+    created_time?: string;
+    updated_time?: string;
+  };
+
+  type delete1Params = {
+    id: string;
+  };
+
   type deleteGoodsByIdParams = {
     id: string;
   };
@@ -54,6 +81,7 @@ declare namespace API {
     good_description?: string;
     good_pic?: string;
     good_price?: number;
+    total_count?: number;
     tag_ids?: string[];
   };
 
@@ -71,12 +99,14 @@ declare namespace API {
 
   type GoodsResponseDTO = {
     id?: string;
-    userId?: number;
+    userId?: string;
     state?: number;
     good_name?: string;
     good_description?: string;
     good_pic?: string;
     good_price?: number;
+    total_count?: number;
+    current_count?: number;
     created_time?: string;
     updated_time?: string;
   };
@@ -88,6 +118,7 @@ declare namespace API {
     good_description?: string;
     good_pic?: string;
     good_price?: number;
+    total_count?: number;
     tag_ids?: string[];
   };
 
