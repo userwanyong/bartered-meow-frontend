@@ -4,7 +4,7 @@ import { request } from '@umijs/max';
 import { API_PREFIX } from '../../../config/api';
 
 /** 此处后端没有提供注释 POST /cart/add */
-export async function add1(body: API.CartAddRequestDTO, options?: { [key: string]: any }) {
+export async function addCart(body: API.CartAddRequestDTO, options?: { [key: string]: any }) {
   return request<API.BaseResponseBoolean>(`${API_PREFIX}/cart/add`, {
     method: 'POST',
     headers: {
@@ -16,9 +16,9 @@ export async function add1(body: API.CartAddRequestDTO, options?: { [key: string
 }
 
 /** 此处后端没有提供注释 POST /cart/delete/${param0} */
-export async function delete1(
+export async function deleteCart(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.delete1Params,
+  params: API.deleteCartParams,
   options?: { [key: string]: any },
 ) {
   const { id: param0, ...queryParams } = params;
@@ -30,7 +30,7 @@ export async function delete1(
 }
 
 /** 此处后端没有提供注释 GET /cart/list */
-export async function list1(options?: { [key: string]: any }) {
+export async function listCart(options?: { [key: string]: any }) {
   return request<API.BaseResponseListCartResponseDTO>(`${API_PREFIX}/cart/list`, {
     method: 'GET',
     ...(options || {}),
@@ -38,7 +38,7 @@ export async function list1(options?: { [key: string]: any }) {
 }
 
 /** 此处后端没有提供注释 POST /cart/update */
-export async function update1(body: API.CartAddRequestDTO, options?: { [key: string]: any }) {
+export async function updateCart(body: API.CartAddRequestDTO, options?: { [key: string]: any }) {
   return request<API.BaseResponseBoolean>(`${API_PREFIX}/cart/update`, {
     method: 'POST',
     headers: {

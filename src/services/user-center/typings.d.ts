@@ -17,6 +17,12 @@ declare namespace API {
     data?: GoodsResponseDTO[];
   };
 
+  type BaseResponseListOrderResponseDTO = {
+    status?: number;
+    message?: string;
+    data?: OrderResponseDTO[];
+  };
+
   type BaseResponseListTagResponseDTO = {
     status?: number;
     message?: string;
@@ -41,6 +47,10 @@ declare namespace API {
     data?: UserResponseDTO;
   };
 
+  type cancelOrderParams = {
+    id: string;
+  };
+
   type CartAddRequestDTO = {
     id?: string;
     num?: number;
@@ -58,11 +68,15 @@ declare namespace API {
     updated_time?: string;
   };
 
-  type delete1Params = {
+  type deleteCartParams = {
     id: string;
   };
 
   type deleteGoodsByIdParams = {
+    id: string;
+  };
+
+  type deleteOrderParams = {
     id: string;
   };
 
@@ -71,6 +85,10 @@ declare namespace API {
   };
 
   type deleteUsingPOSTParams = {
+    id: string;
+  };
+
+  type getOrderByIdParams = {
     id: string;
   };
 
@@ -107,6 +125,7 @@ declare namespace API {
     good_price?: number;
     total_count?: number;
     current_count?: number;
+    pay_count?: number;
     created_time?: string;
     updated_time?: string;
   };
@@ -132,6 +151,31 @@ declare namespace API {
 
   type listParams = {
     userQueryRequestDTO: UserQueryRequestDTO;
+  };
+
+  type OrderAddRequestDTO = {
+    id?: string;
+    name?: string;
+    address?: string;
+    remark?: string;
+    carts?: CartAddRequestDTO[];
+    user_id?: string;
+    total_price?: number;
+  };
+
+  type OrderResponseDTO = {
+    id?: string;
+    name?: string;
+    no?: string;
+    state?: number;
+    time?: string;
+    address?: string;
+    remark?: string;
+    user_id?: string;
+    total_price?: number;
+    pay_time?: string;
+    pay_no?: string;
+    return_time?: string;
   };
 
   type TagAddRequestDTO = {
