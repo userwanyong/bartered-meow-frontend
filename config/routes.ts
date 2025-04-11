@@ -43,4 +43,10 @@ export default [
     component: './User/Goods/detail',
     layout: false,
   },
+  {
+    path: '/user/cart',
+    component: './User/Cart',
+    name: '购物车',
+    layout: false,
+  },
 ];

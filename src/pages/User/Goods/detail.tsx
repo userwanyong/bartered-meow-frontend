@@ -7,6 +7,8 @@ import { useLocation, history, useParams, useModel } from '@umijs/max';
 import { Card, Image, Typography, Descriptions, Button, Space, Divider, message, Input } from 'antd';
 import { createStyles } from 'antd-style';
 import UserInfo from '@/components/UserInfo';
+import { add1 } from '@/services/user-center/cartController';
+
 const { Title, Text, Paragraph } = Typography;
 
 const useStyles = createStyles(({ token }) => ({
@@ -91,6 +93,10 @@ const GoodsDetail: React.FC = () => {
   const location = useLocation();
   const params = useParams<{ id: string }>();
   const [goodsDetail, setGoodsDetail] = useState<API.GoodsResponseDTO | null>(null);
+  const [loading, setLoading] = useState(false);
+  // 获取当前登录用户信息
+  const { initialState } = useModel('@@initialState');
+  const currentUser = initialState?.currentUser;
 
   useEffect(() => {
     // 从路由状态中获取商品详情
@@ -112,9 +118,38 @@ const GoodsDetail: React.FC = () => {
     message.info('购买功能即将上线');
   };
 
-  const handleAddToCart = () => {
-    // 这里添加加入购物车逻辑
-    message.info('加入购物车功能即将上线');
+  const handleAddToCart = async () => {
+    if (!goodsDetail) return;
+    
+    // 检查用户是否已登录
+    if (!currentUser || !currentUser.id) {
+      message.warning('请先登录');
+      history.push('/user/login');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      // 调用后端API添加商品到购物车
+      const response = await add1({
+        good_id: goodsDetail.id, // 将商品ID转换为数字类型
+        user_id: currentUser.id, // 从当前登录用户信息中获取userId
+        num: 1, // 默认添加1个
+      });
+      
+      if (response.status===200) {
+        message.success('成功加入购物车');
+      }else if (response.status === 1013) {
+        message.success(response.message);
+      }  else {
+        message.error(response.message);
+      }
+    } catch (error) {
+      console.error('加入购物车失败:', error);
+      message.error('加入购物车失败，请稍后重试');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!goodsDetail) {
@@ -164,6 +199,7 @@ const GoodsDetail: React.FC = () => {
                   <Descriptions.Item label="商品名称">{goodsDetail.good_name || '未知'}</Descriptions.Item>
                   <Descriptions.Item label="上架时间">{goodsDetail.created_time || '未知'}</Descriptions.Item>
                   <Descriptions.Item label="卖家">{goodsDetail.userId || '未知'}</Descriptions.Item>
+                  <Descriptions.Item label="剩余数量">{goodsDetail.current_count || 0}</Descriptions.Item>
                 </Descriptions>
 
                 <div className={styles.actionButtons}>
@@ -175,6 +211,7 @@ const GoodsDetail: React.FC = () => {
                       size="large"
                       icon={<ShoppingCartOutlined />}
                       onClick={handleAddToCart}
+                      loading={loading}
                     >
                       加入购物车
                     </Button>
