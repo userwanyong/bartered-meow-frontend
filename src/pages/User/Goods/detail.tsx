@@ -1,13 +1,10 @@
-import {
-  ShoppingCartOutlined,
-  ArrowLeftOutlined
-} from '@ant-design/icons';
-import React, { useEffect, useState } from 'react';
-import { useLocation, history, useParams, useModel } from '@umijs/max';
-import { Card, Image, Typography, Descriptions, Button, Space, Divider, message, Input } from 'antd';
-import { createStyles } from 'antd-style';
 import UserInfo from '@/components/UserInfo';
 import { addCart } from '@/services/user-center/cartController';
+import { ArrowLeftOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { history, useLocation, useModel, useParams } from '@umijs/max';
+import { Button, Card, Descriptions, Divider, Image, message, Space, Typography } from 'antd';
+import { createStyles } from 'antd-style';
+import React, { useEffect, useState } from 'react';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -28,7 +25,7 @@ const useStyles = createStyles(({ token }) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: '0',  // 移除内边距
+    padding: '0', // 移除内边距
     background: '#f5f5f5',
     height: '400px', // 固定高度
     width: '400px', // 宽度自适应
@@ -119,27 +116,47 @@ const GoodsDetail: React.FC = () => {
       message.warning('该商品已售罄');
       return;
     }
-    
-    // 这里添加购买逻辑
-    message.info('购买功能即将上线');
-  };
 
-  const handleAddToCart = async () => {
-    if (!goodsDetail) return;
-    
-    // 检查商品是否有库存
-    if ((goodsDetail.current_count as any) <= 0) {
-      message.warning('该商品已售罄');
-      return;
-    }
-    
     // 检查用户是否已登录
     if (!currentUser || !currentUser.id) {
       message.warning('请先登录');
       history.push('/user/login');
       return;
     }
-    
+
+    // 创建一个包含当前商品信息的对象，模拟购物车项结构
+    const selectedItem = {
+      id: `temp_${Date.now()}`, // 临时ID
+      good_id: goodsDetail.id,
+      user_id: currentUser.id,
+      num: 1, // 默认数量为1
+      selected: true,
+      goods: {
+        ...goodsDetail,
+        good_id: goodsDetail.id,
+      },
+    };
+
+    // 跳转到结算页面，并传递选中的商品
+    history.push('/user/orders/checkout', { selectedItems: [selectedItem] });
+  };
+
+  const handleAddToCart = async () => {
+    if (!goodsDetail) return;
+
+    // 检查商品是否有库存
+    if ((goodsDetail.current_count as any) <= 0) {
+      message.warning('该商品已售罄');
+      return;
+    }
+
+    // 检查用户是否已登录
+    if (!currentUser || !currentUser.id) {
+      message.warning('请先登录');
+      history.push('/user/login');
+      return;
+    }
+
     setLoading(true);
     try {
       // 调用后端API添加商品到购物车
@@ -148,12 +165,12 @@ const GoodsDetail: React.FC = () => {
         user_id: currentUser.id, // 从当前登录用户信息中获取userId
         num: 1, // 默认添加1个
       });
-      
-      if (response.status===200) {
+
+      if (response.status === 200) {
         message.success('成功加入购物车');
-      }else if (response.status === 1013) {
+      } else if (response.status === 1013) {
         message.success(response.message);
-      }  else {
+      } else {
         message.error(response.message);
       }
     } catch (error) {
@@ -196,7 +213,7 @@ const GoodsDetail: React.FC = () => {
                   preview={false}
                   width="100%"
                   height="100%"
-                  style={{ display: 'block' }}  // 确保图片是块级元素
+                  style={{ display: 'block' }} // 确保图片是块级元素
                 />
               </div>
             </div>
@@ -207,11 +224,19 @@ const GoodsDetail: React.FC = () => {
                 <Text className={styles.price}>¥ {goodsDetail.good_price}</Text>
 
                 <Descriptions column={1}>
-                  <Descriptions.Item label="商品状态">{goodsDetail.state === 0 ? "在售" : "停售"}</Descriptions.Item>
-                  <Descriptions.Item label="商品名称">{goodsDetail.good_name || '未知'}</Descriptions.Item>
-                  <Descriptions.Item label="上架时间">{goodsDetail.created_time || '未知'}</Descriptions.Item>
+                  <Descriptions.Item label="商品状态">
+                    {goodsDetail.state === 0 ? '在售' : '停售'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="商品名称">
+                    {goodsDetail.good_name || '未知'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="上架时间">
+                    {goodsDetail.created_time || '未知'}
+                  </Descriptions.Item>
                   <Descriptions.Item label="卖家">{goodsDetail.userId || '未知'}</Descriptions.Item>
-                  <Descriptions.Item label="剩余数量">{goodsDetail.current_count || 0}</Descriptions.Item>
+                  <Descriptions.Item label="剩余数量">
+                    {goodsDetail.current_count || 0}
+                  </Descriptions.Item>
                 </Descriptions>
 
                 <div className={styles.actionButtons}>

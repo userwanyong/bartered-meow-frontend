@@ -1,10 +1,10 @@
+import { upload } from '@/services/user-center/fileController';
 import { add } from '@/services/user-center/userController';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProColumns, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
 import { message, Modal, Upload } from 'antd';
 import React from 'react';
-import { upload } from '@/services/user-center/fileController';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 
 interface Props {
   visible: boolean;
@@ -74,7 +74,7 @@ const AvatarUploader: React.FC<any> = ({ value, onChange }) => {
       if (res.status === 200 && res.message) {
         setImageUrl(res.message);
         onChange?.(res.message);
-        message.success("上传成功");
+        message.success('上传成功');
       } else {
         message.error(res.message);
       }
@@ -90,7 +90,7 @@ const AvatarUploader: React.FC<any> = ({ value, onChange }) => {
       name="file"
       listType="picture-card"
       showUploadList={false}
-      accept="image/*"  // 添加这行
+      accept="image/*" // 添加这行
       beforeUpload={(file) => {
         // 验证文件类型
         const isImage = file.type.startsWith('image/');
@@ -107,7 +107,11 @@ const AvatarUploader: React.FC<any> = ({ value, onChange }) => {
       }}
     >
       {imageUrl ? (
-        <img src={imageUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img
+          src={imageUrl}
+          alt="avatar"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
       ) : (
         <div>
           {loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -156,7 +160,7 @@ const CreateModal: React.FC<Props> = (props) => {
       onCancel={() => {
         onCancel?.();
       }}
-      width={700}  // 添加宽度设置
+      width={700} // 添加宽度设置
     >
       <ProTable
         type="form"
@@ -167,7 +171,7 @@ const CreateModal: React.FC<Props> = (props) => {
             onSubmit?.(values);
           }
         }}
-        style={{ maxWidth: '100%' }}  // 添加样式确保表单填充可用空间
+        style={{ maxWidth: '100%' }} // 添加样式确保表单填充可用空间
       />
     </Modal>
   );

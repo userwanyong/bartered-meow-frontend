@@ -78,7 +78,7 @@ const Login: React.FC = () => {
         const urlParams = new URL(window.location.href).searchParams;
         history.push(urlParams.get('redirect') || '/');
         return;
-      }else{
+      } else {
         message.error(msg.message);
       }
 

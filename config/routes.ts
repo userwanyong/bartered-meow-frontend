@@ -59,5 +59,5 @@ export default [
     path: '/user/orders/checkout',
     component: './User/Order/checkout',
     layout: false,
-  }
+  },
 ];

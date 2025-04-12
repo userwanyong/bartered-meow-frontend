@@ -1,10 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { history, useLocation, useModel } from '@umijs/max';
-import { Card, List, Typography, Button, Space, Divider, message, Form, Input, Row, Col, Spin } from 'antd';
-import { createStyles } from 'antd-style';
-import { ShoppingCartOutlined, ArrowLeftOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import UserInfo from '@/components/UserInfo';
 import { addOrder } from '@/services/user-center/orderController';
+import { ArrowLeftOutlined, CheckCircleOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { history, useLocation, useModel } from '@umijs/max';
+import {
+  Button,
+  Card,
+  Col,
+  Divider,
+  Form,
+  Input,
+  List,
+  message,
+  Row,
+  Space,
+  Spin,
+  Typography,
+} from 'antd';
+import { createStyles } from 'antd-style';
+import React, { useEffect, useState } from 'react';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -80,7 +93,7 @@ const CheckoutPage: React.FC = () => {
   // 移除这些不再需要的状态
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [newOrderId, setNewOrderId] = useState<string | null>(null);
-  
+
   // 获取当前登录用户信息
   const { initialState } = useModel('@@initialState');
   const currentUser = initialState?.currentUser;
@@ -100,7 +113,10 @@ const CheckoutPage: React.FC = () => {
   };
 
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + (item.goods?.good_price as number * (item.num as number)), 0);
+    return cartItems.reduce(
+      (total, item) => total + (item.goods?.good_price as number) * (item.num as number),
+      0,
+    );
   };
 
   const handleSubmit = async (values: any) => {
@@ -112,11 +128,11 @@ const CheckoutPage: React.FC = () => {
     setLoading(true);
     try {
       // 生成订单名称，使用所有商品名称组合
-      const orderName = cartItems.map(item => item.goods?.good_name).join('、');
-      
+      const orderName = cartItems.map((item) => item.goods?.good_name).join('、');
+
       // 计算订单总价
       const totalPrice = calculateTotal();
-      
+
       // 准备订单数据
       const orderData: API.OrderAddRequestDTO = {
         user_id: currentUser.id,
@@ -124,19 +140,18 @@ const CheckoutPage: React.FC = () => {
         remark: values.remark,
         name: orderName, // 添加订单名称
         total_price: totalPrice, // 添加订单总价
-        carts: cartItems.map(item => ({
+        carts: cartItems.map((item) => ({
           id: item.id as string,
           num: item.num as number,
           good_id: item.good_id,
           user_id: currentUser.id,
         })),
       };
-      
+
       // 调用后端API创建订单
       const response = await addOrder(orderData);
       console.log(response);
-      
-      
+
       if (response.status === 200) {
         setOrderSuccess(true);
         if (response.message) {
@@ -166,15 +181,13 @@ const CheckoutPage: React.FC = () => {
         <div className={styles.topBar}>
           <UserInfo />
         </div>
-        
+
         <div className={styles.container}>
           <Card className={styles.mainCard}>
             <div className={styles.successCard}>
               <CheckCircleOutlined className={styles.successIcon} />
               <Title level={3}>订单提交成功！</Title>
-              <Paragraph>
-                您的订单已成功提交，订单号：{newOrderId}
-              </Paragraph>
+              <Paragraph>您的订单已成功提交，订单号：{newOrderId}</Paragraph>
               <Paragraph>
                 订单总金额：<Text className={styles.price}>¥ {calculateTotal().toFixed(2)}</Text>
               </Paragraph>
@@ -198,7 +211,7 @@ const CheckoutPage: React.FC = () => {
       <div className={styles.topBar}>
         <UserInfo />
       </div>
-      
+
       <div className={styles.container}>
         <Button
           type="link"
@@ -214,9 +227,9 @@ const CheckoutPage: React.FC = () => {
             <ShoppingCartOutlined style={{ marginRight: 8 }} />
             确认订单
           </Title>
-          
+
           <Divider />
-          
+
           <Spin spinning={loading}>
             <List
               itemLayout="horizontal"
@@ -225,9 +238,9 @@ const CheckoutPage: React.FC = () => {
                 <List.Item>
                   <List.Item.Meta
                     avatar={
-                      <img 
-                        src={item.goods?.good_pic} 
-                        alt={item.goods?.good_name} 
+                      <img
+                        src={item.goods?.good_pic}
+                        alt={item.goods?.good_name}
                         className={styles.productImage}
                       />
                     }
@@ -245,9 +258,9 @@ const CheckoutPage: React.FC = () => {
                 </List.Item>
               )}
             />
-            
+
             <Divider />
-            
+
             <Form
               form={form}
               layout="vertical"
@@ -274,11 +287,8 @@ const CheckoutPage: React.FC = () => {
                   >
                     <Input placeholder="请输入联系电话" />
                   </Form.Item>
-                  
-                  <Form.Item
-                    name="remark"
-                    label="订单备注"
-                  >
+
+                  <Form.Item name="remark" label="订单备注">
                     <Input placeholder="可选，请输入订单备注" />
                   </Form.Item>
                 </Col>
@@ -286,20 +296,15 @@ const CheckoutPage: React.FC = () => {
             </Form>
           </Spin>
         </Card>
-        
+
         <Card className={styles.mainCard}>
           <div className={styles.submitSection}>
             <Space size="large">
               <div>
-                共 <Text strong>{cartItems.length}</Text> 件商品，
-                合计: <Text className={styles.totalPrice}>¥ {calculateTotal().toFixed(2)}</Text>
+                共 <Text strong>{cartItems.length}</Text> 件商品， 合计:{' '}
+                <Text className={styles.totalPrice}>¥ {calculateTotal().toFixed(2)}</Text>
               </div>
-              <Button 
-                type="primary" 
-                size="large" 
-                onClick={() => form.submit()}
-                loading={loading}
-              >
+              <Button type="primary" size="large" onClick={() => form.submit()} loading={loading}>
                 提交订单
               </Button>
             </Space>

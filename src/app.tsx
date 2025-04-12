@@ -1,10 +1,9 @@
-import { AvatarDropdown, AvatarName, Footer, Question } from '@/components';
+import { AvatarDropdown, AvatarName, Footer } from '@/components';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
-import { history } from '@umijs/max';
+import { history, RequestConfig } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
 import { getCurrentUser } from './services/user-center/userController';
-import { RequestConfig } from '@umijs/max';
 const loginPath = '/user/login';
 
 /**
@@ -83,11 +82,11 @@ export const request: RequestConfig = {
       if (token) {
         config.headers = {
           ...config.headers,
-          'token': token,
+          token: token,
         };
       }
       return config;
-    }
+    },
   ],
 };
 

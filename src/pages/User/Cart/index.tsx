@@ -1,18 +1,29 @@
+import UserInfo from '@/components/UserInfo';
+import { deleteCart, listCart, updateCart } from '@/services/user-center/cartController';
 import {
   DeleteOutlined,
+  ExclamationCircleOutlined,
   MinusOutlined,
   PlusOutlined,
   ShoppingCartOutlined,
-  ExclamationCircleOutlined
 } from '@ant-design/icons';
-import React, { useEffect, useState } from 'react';
 import { history } from '@umijs/max';
-import { Modal } from 'antd';
-import { Card, Image, Typography, Button, Space, Divider, message, Table, InputNumber, Empty, Checkbox } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Empty,
+  Image,
+  InputNumber,
+  message,
+  Modal,
+  Space,
+  Table,
+  Typography,
+} from 'antd';
 import { createStyles } from 'antd-style';
-import UserInfo from '@/components/UserInfo';
 import type { ColumnsType } from 'antd/es/table';
-import { listCart, deleteCart, updateCart } from '@/services/user-center/cartController';
+import React, { useEffect, useState } from 'react';
 
 const { Title, Text } = Typography;
 
@@ -120,7 +131,7 @@ const Cart: React.FC = () => {
   useEffect(() => {
     // 检查是否所有商品都被选中
     if (cartItems.length > 0) {
-      setSelectAll(cartItems.every(item => item.selected));
+      setSelectAll(cartItems.every((item) => item.selected));
     } else {
       setSelectAll(false);
     }
@@ -136,14 +147,12 @@ const Cart: React.FC = () => {
 
     try {
       // 获取当前购物车项
-      const currentItem = cartItems.find(item => item.id === id);
+      const currentItem = cartItems.find((item) => item.id === id);
       if (!currentItem) return;
 
       // 先更新UI
-      setCartItems(prevItems =>
-        prevItems.map(item =>
-          item.id === id ? { ...item, num: quantity } : item
-        )
+      setCartItems((prevItems) =>
+        prevItems.map((item) => (item.id === id ? { ...item, num: quantity } : item)),
       );
 
       // 调用后端API更新数量
@@ -152,7 +161,7 @@ const Cart: React.FC = () => {
         num: quantity,
         // 从购物车项中获取用户ID和商品ID
         user_id: currentItem.user_id,
-        good_id: currentItem.good_id
+        good_id: currentItem.good_id,
       });
       if (response.status === 1014) {
         message.warning(response.message);
@@ -173,7 +182,7 @@ const Cart: React.FC = () => {
       const response = await deleteCart({ id });
       if (response.status === 200) {
         // 更新本地状态
-        setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+        setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
         message.success('商品已从购物车中移除');
       } else {
         message.error(response.message);
@@ -187,7 +196,7 @@ const Cart: React.FC = () => {
   // 选择/取消选择单个商品
   const handleSelectItem = (id: string, selected: boolean) => {
     // 获取当前商品
-    const currentItem = cartItems.find(item => item.id === id);
+    const currentItem = cartItems.find((item) => item.id === id);
 
     // 如果商品库存为0或负数，且尝试选中它，则显示提示并返回
     if (selected && currentItem && (currentItem.goods?.current_count as number) <= 0) {
@@ -195,10 +204,8 @@ const Cart: React.FC = () => {
       return;
     }
 
-    setCartItems(prevItems =>
-      prevItems.map(item =>
-        item.id === id ? { ...item, selected } : item
-      )
+    setCartItems((prevItems) =>
+      prevItems.map((item) => (item.id === id ? { ...item, selected } : item)),
     );
   };
 
@@ -206,14 +213,12 @@ const Cart: React.FC = () => {
   const handleSelectAll = (e: any) => {
     const checked = e.target.checked;
     setSelectAll(checked);
-    setCartItems(prevItems =>
-      prevItems.map(item => ({ ...item, selected: checked }))
-    );
+    setCartItems((prevItems) => prevItems.map((item) => ({ ...item, selected: checked })));
   };
 
   // 删除选中的商品
   const handleDeleteSelected = async () => {
-    const selectedItems = cartItems.filter(item => item.selected);
+    const selectedItems = cartItems.filter((item) => item.selected);
     if (selectedItems.length === 0) {
       message.warning('请至少选择一件商品');
       return;
@@ -228,12 +233,10 @@ const Cart: React.FC = () => {
       onOk: async () => {
         try {
           // 使用Promise.all并行处理多个删除请求
-          await Promise.all(
-            selectedItems.map(item => deleteCart({ id: item.id as any }))
-          );
+          await Promise.all(selectedItems.map((item) => deleteCart({ id: item.id as any })));
 
           // 更新本地状态
-          setCartItems(prevItems => prevItems.filter(item => !item.selected));
+          setCartItems((prevItems) => prevItems.filter((item) => !item.selected));
           message.success('已删除选中商品');
         } catch (error) {
           message.error('删除选中商品失败');
@@ -241,15 +244,15 @@ const Cart: React.FC = () => {
           // 如果API调用失败，重新获取购物车数据
           fetchCartItems();
         }
-      }
+      },
     });
   };
 
   // 修改结算按钮的处理函数
   const handleCheckout = () => {
     // 过滤出选中且有库存的商品
-    const selectedItems = cartItems.filter(item =>
-      item.selected && (item.goods?.current_count as number) > 0
+    const selectedItems = cartItems.filter(
+      (item) => item.selected && (item.goods?.current_count as number) > 0,
     );
 
     if (selectedItems.length === 0) {
@@ -263,8 +266,8 @@ const Cart: React.FC = () => {
 
   const calculateTotal = () => {
     return cartItems
-      .filter(item => item.selected)
-      .reduce((total, item) => total + (item.goods?.good_price as any * (item.num as any)), 0);
+      .filter((item) => item.selected)
+      .reduce((total, item) => total + (item.goods?.good_price as any) * (item.num as any), 0);
   };
 
   // 表格列定义
@@ -302,7 +305,9 @@ const Cart: React.FC = () => {
           />
           <div style={{ marginLeft: 16 }}>
             <div>{record.goods?.good_name}</div>
-            <div style={{ color: '#999', fontSize: '12px' }}>{record.goods?.good_description?.substring(0, 30)}...</div>
+            <div style={{ color: '#999', fontSize: '12px' }}>
+              {record.goods?.good_description?.substring(0, 30)}...
+            </div>
           </div>
         </div>
       ),
@@ -313,7 +318,9 @@ const Cart: React.FC = () => {
       key: 'good_price',
       width: 120,
       render: (_, record) => (
-        <Text className={record.goods?.good_price as any}>¥ {(record.goods?.good_price as any * (record.num as any)).toFixed(2)}</Text>
+        <Text className={record.goods?.good_price as any}>
+          ¥ {((record.goods?.good_price as any) * (record.num as any)).toFixed(2)}
+        </Text>
       ),
     },
     {
@@ -333,7 +340,7 @@ const Cart: React.FC = () => {
             <>
               <Button
                 icon={<MinusOutlined />}
-                onClick={() => handleQuantityChange(record.id as any, record.num as any - 1)}
+                onClick={() => handleQuantityChange(record.id as any, (record.num as any) - 1)}
                 disabled={(record.num as number) <= 1}
               />
               <InputNumber
@@ -345,7 +352,7 @@ const Cart: React.FC = () => {
               />
               <Button
                 icon={<PlusOutlined />}
-                onClick={() => handleQuantityChange(record.id as any, record.num as any + 1)}
+                onClick={() => handleQuantityChange(record.id as any, (record.num as any) + 1)}
                 disabled={(record.num as number) >= (record.goods?.current_count as number)}
               />
             </>
@@ -358,7 +365,9 @@ const Cart: React.FC = () => {
       key: 'subtotal',
       width: 120,
       render: (_, record) => (
-        <Text className={styles.price}>¥ {(record.goods?.good_price as any * (record.num as any)).toFixed(2)}</Text>
+        <Text className={styles.price}>
+          ¥ {((record.goods?.good_price as any) * (record.num as any)).toFixed(2)}
+        </Text>
       ),
     },
     {
@@ -385,31 +394,40 @@ const Cart: React.FC = () => {
       </div>
 
       <div className={styles.container}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '16px',
+          }}
+        >
+          <Title level={4}>
+            <ShoppingCartOutlined style={{ marginRight: 8 }} />
+            我的购物车
+          </Title>
 
+          {cartItems.length > 0 && (
+            <Button
+              type="primary"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={handleDeleteSelected}
+              disabled={cartItems.filter((item) => item.selected).length === 0}
+              loading={loading}
+            >
+              批量删除{' '}
+              {cartItems.filter((item) => item.selected).length > 0
+                ? `(${cartItems.filter((item) => item.selected).length})`
+                : ''}
+            </Button>
+          )}
+        </div>
 
+        <Divider />
 
         {cartItems.length > 0 ? (
           <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <Title level={4}>
-                <ShoppingCartOutlined style={{ marginRight: 8 }} />
-                我的购物车
-              </Title>
-
-              <Button
-                type="primary"
-                danger
-                icon={<DeleteOutlined />}
-                onClick={handleDeleteSelected}
-                disabled={cartItems.filter(item => item.selected).length === 0}
-                loading={loading}
-              >
-                批量删除 {cartItems.filter(item => item.selected).length > 0 ? `(${cartItems.filter(item => item.selected).length})` : ''}
-              </Button>
-            </div>
-
-            <Divider />
-
             <Table
               rowKey="id"
               columns={columns}
@@ -422,7 +440,7 @@ const Cart: React.FC = () => {
             <div className={styles.checkoutSection}>
               <div>
                 <div>
-                  已选商品 <Text strong>{cartItems.filter(item => item.selected).length}</Text> 件
+                  已选商品 <Text strong>{cartItems.filter((item) => item.selected).length}</Text> 件
                 </div>
               </div>
               <div>
@@ -441,7 +459,7 @@ const Cart: React.FC = () => {
           <div className={styles.emptyContainer}>
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={loading ? "正在加载..." : "购物车空空如也，快去选购商品吧！"}
+              description={loading ? '正在加载...' : '购物车空空如也，快去选购商品吧！'}
             >
               {!loading && (
                 <Button type="primary" onClick={handleBack}>
@@ -451,7 +469,6 @@ const Cart: React.FC = () => {
             </Empty>
           </div>
         )}
-
       </div>
     </div>
   );

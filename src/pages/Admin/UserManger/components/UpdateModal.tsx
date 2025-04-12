@@ -1,11 +1,11 @@
+import { upload } from '@/services/user-center/fileController';
 import { update } from '@/services/user-center/userController';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProColumns, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
+import { useModel } from '@umijs/max'; // 添加这行导入
 import { message, Modal, Upload } from 'antd';
 import React from 'react';
-import { upload } from '@/services/user-center/fileController';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { useModel } from '@umijs/max';  // 添加这行导入
 
 interface Props {
   oldData?: API.UserResponseDTO;
@@ -27,7 +27,7 @@ const AvatarUploader: React.FC<any> = ({ value, onChange }) => {
       if (res.status === 200 && res.message) {
         setImageUrl(res.message);
         onChange?.(res.message);
-        message.success("上传成功");
+        message.success('上传成功');
       } else {
         message.error(res.message);
       }
@@ -43,7 +43,7 @@ const AvatarUploader: React.FC<any> = ({ value, onChange }) => {
       name="file"
       listType="picture-card"
       showUploadList={false}
-      accept="image/*"  // 添加这行
+      accept="image/*" // 添加这行
       beforeUpload={(file) => {
         // 验证文件类型
         const isImage = file.type.startsWith('image/');
@@ -60,7 +60,11 @@ const AvatarUploader: React.FC<any> = ({ value, onChange }) => {
       }}
     >
       {imageUrl ? (
-        <img src={imageUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img
+          src={imageUrl}
+          alt="avatar"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
       ) : (
         <div>
           {loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -173,7 +177,7 @@ const UpdateModal: React.FC<Props> = (props) => {
         type="form"
         columns={columns}
         form={{
-          initialValues: initialValues,  // 使用转换后的数据
+          initialValues: initialValues, // 使用转换后的数据
         }}
         onSubmit={async (values: API.UserUpdateRequestDTO) => {
           const success = await handleUpdate({

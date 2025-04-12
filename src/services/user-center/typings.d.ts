@@ -1,4 +1,17 @@
 declare namespace API {
+  type AliPayRequestDTO = {
+    traceNo?: string;
+    totalAmount?: number;
+    subject?: string;
+    alipayTraceNo?: string;
+  };
+
+  type BaseResponse = {
+    status?: number;
+    message?: string;
+    data?: Record<string, any>;
+  };
+
   type BaseResponseBoolean = {
     status?: number;
     message?: string;
@@ -176,6 +189,14 @@ declare namespace API {
     pay_time?: string;
     pay_no?: string;
     return_time?: string;
+  };
+
+  type payParams = {
+    aliPay: AliPayRequestDTO;
+  };
+
+  type returnPayParams = {
+    aliPay: AliPayRequestDTO;
   };
 
   type TagAddRequestDTO = {

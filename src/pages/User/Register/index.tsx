@@ -82,8 +82,8 @@ const Register: React.FC = () => {
         // await fetchUserInfo();
         history.push('/user/login');
         return;
-      }else{
-        message.error(msg.message); 
+      } else {
+        message.error(msg.message);
       }
       // 如果失败去设置用户错误信息
       // setUserLoginState(msg);
