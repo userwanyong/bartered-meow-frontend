@@ -1,4 +1,4 @@
-import { deleteGoodsById,listGoods } from '@/services/user-center/goodsController';
+import { deleteGoodsById, listGoods } from '@/services/user-center/goodsController';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
@@ -160,19 +160,19 @@ const GoodAdminPage: React.FC = () => {
         ]}
         request={async (params) => {
           console.log('查询参数:', params); // 添加日志查看请求参数
-          
+
           const goodsQueryRequestDTO: API.GoodsQueryRequestDTO = {
             good_name: params.good_name,
             state: params.state,
           };
-          
+
           try {
             const goodList = await listGoods({
-              goodsQueryRequestDTO
+              goodsQueryRequestDTO,
             });
-            
+
             console.log('接口返回数据:', goodList); // 添加日志查看返回数据
-            
+
             return {
               data: goodList.data || [],
               success: goodList.status === 0,
