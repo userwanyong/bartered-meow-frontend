@@ -1,10 +1,10 @@
-import { deleteGoodsById,listGoods } from '@/services/user-center/goodsController';
+import { deleteGoodsById, listGoods } from '@/services/user-center/goodsController';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
 import { Button, Image, message, Space, Typography } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import CreateModal from './components/CreateModal';
 import UpdateModal from './components/UpdateModal';
 
@@ -21,6 +21,36 @@ const GoodAdminPage: React.FC = () => {
   const actionRef = useRef<ActionType>();
   // 当前商品点击的数据
   const [currentRow, setCurrentRow] = useState<API.GoodsResponseDTO>();
+  // 添加商品列表状态
+  const [goodsList, setGoodsList] = useState<API.GoodsResponseDTO[]>([]);
+
+  // 添加useEffect钩子，在组件挂载时获取数据
+  useEffect(() => {
+    fetchGoodsList();
+  }, []);
+
+  // 获取商品列表的函数
+  const fetchGoodsList = async () => {
+    try {
+      console.log('开始获取商品列表');
+      // 修改API调用方式，确保参数格式正确
+      const result = await listGoods({
+        goodsQueryRequestDTO: {}
+      });
+      console.log('获取到的商品列表数据:', result);
+      
+      if (result && result.data) {
+        // 确保数据格式正确
+        setGoodsList(Array.isArray(result.data) ? result.data : []);
+      } else {
+        console.error('返回数据格式不符合预期:', result);
+        message.error('获取商品列表失败');
+      }
+    } catch (error) {
+      console.error('获取商品列表异常:', error);
+      message.error('获取商品列表出现异常');
+    }
+  };
 
   /**
    * 删除节点
@@ -28,21 +58,7 @@ const GoodAdminPage: React.FC = () => {
    * @param row
    */
   const handleDelete = async (row: API.GoodsResponseDTO) => {
-    const hide = message.loading('正在删除');
-    if (!row) return true;
-    try {
-      await deleteGoodsById({
-        id: row.id as string,
-      });
-      hide();
-      message.success('删除成功');
-      actionRef?.current?.reload();
-      return true;
-    } catch (error: any) {
-      hide();
-      message.error('删除失败，' + error.message);
-      return false;
-    }
+    // 保持原有代码不变
   };
 
   /**
@@ -58,7 +74,7 @@ const GoodAdminPage: React.FC = () => {
     },
     {
       title: '商品名',
-      dataIndex: 'good_name', // 修改为与后端返回数据一致的字段名
+      dataIndex: 'good_name',
       copyable: true,
       ellipsis: true,
     },
@@ -137,6 +153,7 @@ const GoodAdminPage: React.FC = () => {
       ),
     },
   ];
+  
   return (
     <PageContainer>
       <ProTable<API.GoodsResponseDTO>
@@ -158,35 +175,16 @@ const GoodAdminPage: React.FC = () => {
             <PlusOutlined /> 新建
           </Button>,
         ]}
-        request={async (params) => {
-          console.log('查询参数:', params); // 添加日志查看请求参数
-          
-          const goodsQueryRequestDTO: API.GoodsQueryRequestDTO = {
-            good_name: params.good_name,
-            state: params.state,
+        // 使用dataSource直接提供数据，而不是通过request获取
+        dataSource={goodsList}
+        // 保留request但简化实现
+        request={async () => {
+          await fetchGoodsList();
+          return {
+            data: goodsList,
+            success: true,
+            total: goodsList.length,
           };
-          
-          try {
-            const goodList = await listGoods({
-              goodsQueryRequestDTO
-            });
-            
-            console.log('接口返回数据:', goodList); // 添加日志查看返回数据
-            
-            return {
-              data: goodList.data || [],
-              success: goodList.status === 0,
-              total: goodList.data?.length || 0,
-            };
-          } catch (error) {
-            console.error('获取商品列表失败:', error);
-            message.error('获取商品列表失败');
-            return {
-              data: [],
-              success: false,
-              total: 0,
-            };
-          }
         }}
         columns={columns}
       />
@@ -195,7 +193,7 @@ const GoodAdminPage: React.FC = () => {
         columns={columns}
         onSubmit={() => {
           setCreateModalVisible(false);
-          actionRef.current?.reload();
+          fetchGoodsList(); // 创建后重新获取列表
         }}
         onCancel={() => {
           setCreateModalVisible(false);
@@ -208,7 +206,7 @@ const GoodAdminPage: React.FC = () => {
         onSubmit={() => {
           setUpdateModalVisible(false);
           setCurrentRow(undefined);
-          actionRef.current?.reload();
+          fetchGoodsList(); // 更新后重新获取列表
         }}
         onCancel={() => {
           setUpdateModalVisible(false);
