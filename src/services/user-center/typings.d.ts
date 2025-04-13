@@ -155,6 +155,14 @@ declare namespace API {
     tag_ids?: string[];
   };
 
+  type listGoodsAdminParams = {
+    goodsQueryRequestDTO: GoodsQueryRequestDTO;
+  };
+
+  type listGoodsByTagIdAdminParams = {
+    tagId: string;
+  };
+
   type listGoodsByTagIdParams = {
     tagId: string;
   };

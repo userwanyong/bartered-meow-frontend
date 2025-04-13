@@ -15,6 +15,14 @@ export async function addCart(body: API.CartAddRequestDTO, options?: { [key: str
   });
 }
 
+/** 此处后端没有提供注释 GET /cart/admin/list */
+export async function listCartAdmin(options?: { [key: string]: any }) {
+  return request<API.BaseResponseListCartResponseDTO>(`${API_PREFIX}/cart/admin/list`, {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 POST /cart/delete/${param0} */
 export async function deleteCart(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
