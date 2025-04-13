@@ -154,7 +154,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
           history.push('/user/password');
           break;
         case 'buy':
-          history.push('/user/buy');
+          history.push('/goods');
           break;
         case 'sell':
           history.push('/user/sell');
