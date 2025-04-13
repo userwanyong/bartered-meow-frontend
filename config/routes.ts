@@ -60,4 +60,9 @@ export default [
     component: './User/Order/checkout',
     layout: false,
   },
+  {
+    path: '/user/password',
+    component: './User/Password',
+    layout: false,
+  },
 ];

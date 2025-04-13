@@ -4,6 +4,7 @@ declare namespace API {
     totalAmount?: number;
     subject?: string;
     alipayTraceNo?: string;
+    returnUrl?: string;
   };
 
   type BaseResponse = {
@@ -234,6 +235,12 @@ declare namespace API {
   type UserLoginRequestDTO = {
     username?: string;
     password?: string;
+  };
+
+  type UserPasswordRequestDTO = {
+    old_password?: string;
+    new_password?: string;
+    confirm_password?: string;
   };
 
   type UserQueryRequestDTO = {
