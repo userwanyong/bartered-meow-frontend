@@ -29,6 +29,14 @@ export async function addOrder(body: API.OrderAddRequestDTO, options?: { [key: s
   });
 }
 
+/** 此处后端没有提供注释 GET /order/admin/list */
+export async function listOrderAdmin(options?: { [key: string]: any }) {
+  return request<API.BaseResponseListOrderResponseDTO>(`${API_PREFIX}/order/admin/list`, {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 POST /order/cancel/${param0} */
 export async function cancelOrder(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

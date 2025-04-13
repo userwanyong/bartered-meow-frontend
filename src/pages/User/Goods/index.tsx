@@ -1,5 +1,5 @@
 import UserInfo from '@/components/UserInfo';
-import { listGoods, listGoodsByTagId, listTag } from '@/services/user-center/goodsController';
+import { listGoodsAdmin, listGoodsByTagIdAdmin, listTag } from '@/services/user-center/goodsController';
 import { history, useModel } from '@umijs/max';
 import { Card, Image, Input, List, Menu, message, Typography } from 'antd';
 import { createStyles } from 'antd-style';
@@ -99,7 +99,7 @@ const GoodsPage: React.FC = () => {
   const fetchGoodsList = async (searchKey?: string) => {
     setLoading(true);
     try {
-      const res = await listGoods({
+      const res = await listGoodsAdmin({
         goodsQueryRequestDTO: {
           goodName: searchKey,
           goodDescription: searchKey,
@@ -121,7 +121,7 @@ const GoodsPage: React.FC = () => {
   const fetchGoodsByTagId = async (tagId: string) => {
     setLoading(true);
     try {
-      const res = await listGoodsByTagId({
+      const res = await listGoodsByTagIdAdmin({
         tagId: tagId,
       });
       if (res.data) {
@@ -184,7 +184,6 @@ const GoodsPage: React.FC = () => {
 
       <div className={styles.container}>
         <div className={styles.sideNav}>
-          {/* 添加分类导航 */}
           <Menu
             mode="vertical"
             selectedKeys={[selectedTagId]}
