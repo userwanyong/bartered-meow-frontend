@@ -1,14 +1,40 @@
 declare namespace API {
+  type AliPayRequestDTO = {
+    traceNo?: string;
+    totalAmount?: number;
+    subject?: string;
+    alipayTraceNo?: string;
+    returnUrl?: string;
+  };
+
+  type BaseResponse = {
+    status?: number;
+    message?: string;
+    data?: Record<string, any>;
+  };
+
   type BaseResponseBoolean = {
     status?: number;
     message?: string;
     data?: boolean;
   };
 
+  type BaseResponseListCartResponseDTO = {
+    status?: number;
+    message?: string;
+    data?: CartResponseDTO[];
+  };
+
   type BaseResponseListGoodsResponseDTO = {
     status?: number;
     message?: string;
     data?: GoodsResponseDTO[];
+  };
+
+  type BaseResponseListOrderResponseDTO = {
+    status?: number;
+    message?: string;
+    data?: OrderResponseDTO[];
   };
 
   type BaseResponseListTagResponseDTO = {
@@ -35,7 +61,36 @@ declare namespace API {
     data?: UserResponseDTO;
   };
 
+  type cancelOrderParams = {
+    id: string;
+  };
+
+  type CartAddRequestDTO = {
+    id?: string;
+    num?: number;
+    good_id?: string;
+    user_id?: string;
+  };
+
+  type CartResponseDTO = {
+    id?: string;
+    num?: number;
+    goods?: GoodsResponseDTO;
+    good_id?: string;
+    user_id?: string;
+    created_time?: string;
+    updated_time?: string;
+  };
+
+  type deleteCartParams = {
+    id: string;
+  };
+
   type deleteGoodsByIdParams = {
+    id: string;
+  };
+
+  type deleteOrderParams = {
     id: string;
   };
 
@@ -47,6 +102,10 @@ declare namespace API {
     id: string;
   };
 
+  type getOrderByIdParams = {
+    id: string;
+  };
+
   type GoodsAddRequestDTO = {
     state?: number;
     user_id?: string;
@@ -54,6 +113,7 @@ declare namespace API {
     good_description?: string;
     good_pic?: string;
     good_price?: number;
+    total_count?: number;
     tag_ids?: string[];
   };
 
@@ -71,12 +131,15 @@ declare namespace API {
 
   type GoodsResponseDTO = {
     id?: string;
-    userId?: number;
+    userId?: string;
     state?: number;
     good_name?: string;
     good_description?: string;
     good_pic?: string;
     good_price?: number;
+    total_count?: number;
+    current_count?: number;
+    pay_count?: number;
     created_time?: string;
     updated_time?: string;
   };
@@ -88,7 +151,16 @@ declare namespace API {
     good_description?: string;
     good_pic?: string;
     good_price?: number;
+    total_count?: number;
     tag_ids?: string[];
+  };
+
+  type listGoodsAdminParams = {
+    goodsQueryRequestDTO: GoodsQueryRequestDTO;
+  };
+
+  type listGoodsByTagIdAdminParams = {
+    tagId: string;
   };
 
   type listGoodsByTagIdParams = {
@@ -101,6 +173,39 @@ declare namespace API {
 
   type listParams = {
     userQueryRequestDTO: UserQueryRequestDTO;
+  };
+
+  type OrderAddRequestDTO = {
+    id?: string;
+    name?: string;
+    address?: string;
+    remark?: string;
+    carts?: CartAddRequestDTO[];
+    user_id?: string;
+    total_price?: number;
+  };
+
+  type OrderResponseDTO = {
+    id?: string;
+    name?: string;
+    no?: string;
+    state?: number;
+    time?: string;
+    address?: string;
+    remark?: string;
+    user_id?: string;
+    total_price?: number;
+    pay_time?: string;
+    pay_no?: string;
+    return_time?: string;
+  };
+
+  type payParams = {
+    aliPay: AliPayRequestDTO;
+  };
+
+  type returnPayParams = {
+    aliPay: AliPayRequestDTO;
   };
 
   type TagAddRequestDTO = {
@@ -138,6 +243,12 @@ declare namespace API {
   type UserLoginRequestDTO = {
     username?: string;
     password?: string;
+  };
+
+  type UserPasswordRequestDTO = {
+    old_password?: string;
+    new_password?: string;
+    confirm_password?: string;
   };
 
   type UserQueryRequestDTO = {

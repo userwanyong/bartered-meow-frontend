@@ -1,14 +1,13 @@
 // import { logout } from '@/services/user-center/userController';
-import { 
-  LogoutOutlined,
-  UserOutlined,
+import {
   HomeOutlined,
   LockOutlined,
-  ShoppingOutlined,
+  LogoutOutlined,
+  OrderedListOutlined,
   ShopOutlined,
   ShoppingCartOutlined,
-  OrderedListOutlined,
-  SettingOutlined 
+  ShoppingOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import { Spin } from 'antd';
@@ -72,8 +71,6 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
   const { styles } = useStyles();
 
   const { initialState, setInitialState } = useModel('@@initialState');
-
-
 
   const loading = (
     <span className={styles.action}>
@@ -157,7 +154,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
           history.push('/user/password');
           break;
         case 'buy':
-          history.push('/user/buy');
+          history.push('/goods');
           break;
         case 'sell':
           history.push('/user/sell');

@@ -89,3 +89,18 @@ export async function update(body: API.UserUpdateRequestDTO, options?: { [key: s
     ...(options || {}),
   });
 }
+
+/** 此处后端没有提供注释 POST /user/update/password */
+export async function updatePassword(
+  body: API.UserPasswordRequestDTO,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/user/update/password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
