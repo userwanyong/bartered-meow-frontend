@@ -120,6 +120,7 @@ declare namespace API {
   type GoodsQueryRequestDTO = {
     id?: string;
     state?: number;
+    tag?: string;
     user_id?: string;
     good_name?: string;
     good_description?: string;
@@ -142,6 +143,7 @@ declare namespace API {
     pay_count?: number;
     created_time?: string;
     updated_time?: string;
+    tag_ids?: string[];
   };
 
   type GoodsUpdateRequestDTO = {
@@ -173,6 +175,10 @@ declare namespace API {
 
   type listParams = {
     userQueryRequestDTO: UserQueryRequestDTO;
+  };
+
+  type listTagParams = {
+    tagQueryRequestDTO: TagQueryRequestDTO;
   };
 
   type OrderAddRequestDTO = {
@@ -210,6 +216,11 @@ declare namespace API {
 
   type TagAddRequestDTO = {
     tag_name?: string;
+  };
+
+  type TagQueryRequestDTO = {
+    id?: string;
+    tagName?: string;
   };
 
   type TagResponseDTO = {

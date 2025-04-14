@@ -1,37 +1,37 @@
-import { deleteGoodsById, listGoodsAdmin } from '@/services/user-center/goodsController';
+import { deleteTag, listTag, updateTag, addTag } from '@/services/user-center/goodsController';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Image, message, Space, Typography } from 'antd';
+import { Button, message, Space, Typography } from 'antd';
 import React, { useRef, useState } from 'react';
 import CreateModal from './components/CreateModal';
 import UpdateModal from './components/UpdateModal';
 
 /**
- * 商品管理页面
+ * 分类管理页面
  *
  * @constructor
  */
-const GoodAdminPage: React.FC = () => {
+const TagAdminPage: React.FC = () => {
   // 是否显示新建窗口
   const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
   // 是否显示更新窗口
   const [updateModalVisible, setUpdateModalVisible] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
-  // 当前商品点击的数据
-  const [currentRow, setCurrentRow] = useState<API.GoodsResponseDTO>();
+  // 当前分类点击的数据
+  const [currentRow, setCurrentRow] = useState<API.TagResponseDTO>();
 
   /**
    * 删除节点
    *
    * @param row
    */
-  const handleDelete = async (row: API.GoodsResponseDTO) => {
+  const handleDelete = async (row: API.TagResponseDTO) => {
     const hide = message.loading('正在删除');
     if (!row) return true;
     try {
-      await deleteGoodsById({
+      await deleteTag({
         id: row.id as any,
       });
       hide();
@@ -48,7 +48,7 @@ const GoodAdminPage: React.FC = () => {
   /**
    * 表格列配置
    */
-  const columns: ProColumns<API.GoodsResponseDTO>[] = [
+  const columns: ProColumns<API.TagResponseDTO>[] = [
     {
       title: 'id',
       dataIndex: 'id',
@@ -57,50 +57,10 @@ const GoodAdminPage: React.FC = () => {
       editable: false,
     },
     {
-      title: '商品名',
-      dataIndex: 'good_name',
+      title: '分类名',
+      dataIndex: 'tag_name',
       copyable: true,
       ellipsis: true,
-    },
-    {
-      title: '商品描述',
-      dataIndex: 'good_description',
-      copyable: true,
-      ellipsis: true,
-      search: false,
-    },
-    {
-      title: '商品图片',
-      dataIndex: 'good_pic',
-      render: (_, record) => (
-        <div>
-          <Image src={record.good_pic} width={70} height={70} />
-        </div>
-      ),
-      ellipsis: true,
-      search: false,
-    },
-    {
-      title: '商品价格',
-      dataIndex: 'good_price',
-      ellipsis: true,
-      valueType: 'money',
-      search: false,
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
-      ellipsis: true,
-      valueEnum: {
-        0: {
-          text: '上架中',
-          status: 'Success',
-        },
-        1: {
-          text: '已下架',
-          status: 'Error',
-        },
-      },
     },
     {
       title: '创建时间',
@@ -140,8 +100,8 @@ const GoodAdminPage: React.FC = () => {
   
   return (
     <PageContainer>
-      <ProTable<API.GoodsResponseDTO>
-        headerTitle={'商品数据'}
+      <ProTable<API.TagResponseDTO>
+        headerTitle={'分类数据'}
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -160,18 +120,29 @@ const GoodAdminPage: React.FC = () => {
           </Button>,
         ]}
         request={async (params, sort, filter) => {
+          try {
             // 参数转换，构建符合API要求的参数结构
             const queryParams = {
-              goodsQueryRequestDTO: {
-                goodName: params.good_name,
-                state: params.state !== undefined ? Number(params.state) : undefined,
+              tagQueryRequestDTO: {
+                tagName: params.tag_name,
                 id: params.id || undefined,
               }
             };
             
-            const goodsList = await listGoodsAdmin(queryParams as API.listGoodsParams);
-            
-            return goodsList;
+            const response = await listTag(queryParams as any);
+            return {
+              data: response.data || [],
+              success: true,
+              total: response.data?.length || 0,
+            };
+          } catch (error: any) {
+            message.error('获取分类列表失败: ' + error.message);
+            return {
+              data: [],
+              success: false,
+              total: 0,
+            };
+          }
         }}
         columns={columns}
       />
@@ -202,4 +173,4 @@ const GoodAdminPage: React.FC = () => {
     </PageContainer>
   );
 };
-export default GoodAdminPage;
+export default TagAdminPage;

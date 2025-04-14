@@ -120,9 +120,18 @@ export async function deleteTag(
 }
 
 /** 此处后端没有提供注释 GET /goods/tag/list */
-export async function listTag(options?: { [key: string]: any }) {
+export async function listTag(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.listTagParams,
+  options?: { [key: string]: any },
+) {
   return request<API.BaseResponseListTagResponseDTO>(`${API_PREFIX}/goods/tag/list`, {
     method: 'GET',
+    params: {
+      ...params,
+      tagQueryRequestDTO: undefined,
+      ...params['tagQueryRequestDTO'],
+    },
     ...(options || {}),
   });
 }

@@ -116,7 +116,7 @@ const Welcome: React.FC = () => {
               color: token.colorTextHeading,
             }}
           >
-            用户中心-项目规划
+            交易喵-基于AI的二手交易平台
           </div>
           <p
             style={{
@@ -128,10 +128,7 @@ const Welcome: React.FC = () => {
               width: '65%',
             }}
           >
-            任务规划：带领大家完成以下前端（react）+后端（springboot）的开发，能够拥有一个简单的后台管理系统框架，并且能够实现用户注册、登录、注销、用户管理、条件查询等功能
-            <br />
-            <br />
-            拓展任务：自己完善用户个人信息的修改、修改密码、忘记密码等功能
+            阶段一（已完成）、阶段二、阶段三
           </p>
           <div
             style={{
@@ -142,49 +139,86 @@ const Welcome: React.FC = () => {
           >
             <InfoCard
               index={1}
-              href="https://umijs.org/docs/introduce/introduce"
-              title="前端"
+              href=""
+              title="阶段一"
               desc={
                 <>
-                  react + ant design pro
+                  <div style={{ fontWeight: 'bold', fontSize: '16px' }}>用户端</div>
+                  •  商品首页 [第一阶段]
                   <br />
+                  •  个人信息 [第一阶段]
                   <br />
-                  登录界面
+                  •  修改密码 [第一阶段]
                   <br />
-                  注册界面
+                  •  我要买 [第一阶段]
                   <br />
-                  主体界面
+                  •  我要卖（CRUD） [第一阶段]
                   <br />
-                  用户管理界面
+                  •  我的购物车（收藏）[第一阶段]
                   <br />
+                  •  我的订单  [第一阶段]
+                  <br />
+                  <div style={{ fontWeight: 'bold', fontSize: '16px' }}>管理端</div>
+                  •  用户管理  [第一阶段]
+                  <br />
+                  •  商品管理  [第一阶段]
+                  <br />
+                  •  分类管理  [第一阶段]
                 </>
               }
             />
             <InfoCard
               index={2}
-              title="后端"
-              href="https://ant.design"
+              title="阶段二"
+              href=""
               desc={
                 <>
-                  springboot + mybatis-plus + mysql
+                  <div style={{ fontWeight: 'bold', fontSize: '16px' }}>用户端</div>
+                  •  对商品进行评论  [第二阶段]
                   <br />
+                  •  历史浏览记录  [第二阶段]
                   <br />
-                  用户注册：/user/register
+                  •  微信扫码/公众号登陆  [第二阶段]
                   <br />
-                  用户登录：/user/login
+                  •  AI助手（在与AI的对话中完成，eg.告诉自己的需求，期望的价格范围等，由AI查询数据库并总结返回给用户。 eg.将繁杂的使用可视化界面的相关操作交给AI完成，个人信息的修改，修改密码，售卖商品，购买商品等非重要信息，支付and重要信息由用户自主填写，AI将严格遵守本平台的规定，只回答相关问题，其他无关问题一律不回答，保证专一性）[第二阶段]
                   <br />
-                  用户注销：/user/logout
+                  <div style={{ fontWeight: 'bold', fontSize: '16px' }}>管理端</div>
+                  •  审核管理   [第二阶段]
                   <br />
-                  获取当前登录用户信息：/user/current
+                  •  评论管理   [第二阶段]
                   <br />
-                  条件查询所有用户：/user/list
+                  •  订单管理  [第二阶段]
                   <br />
-                  添加用户：/user/add
+                  •  操作日志  [第二阶段]
                   <br />
-                  修改用户：/user/update
+                  •  公告管理  [第二阶段]
                   <br />
-                  删除用户：/user/delete
+                  •  数据的批量导入导出  [第二阶段]
                   <br />
+                  •  基于AI的数据统计（在与AI的对话中完成，帮助管理员分析商品的售卖情况，日常流水，调用接口直接导出数据等） [第二阶段]
+                </>
+              }
+            />
+            <InfoCard
+              index={2}
+              title="阶段三"
+              href=""
+              desc={
+                <>
+                  <div style={{ fontWeight: 'bold', fontSize: '16px' }}>性能优化</div>
+                  •  使用redis缓存提高查询速度，减轻数据库压力
+                  <br />
+                  •  使用ES进行搜索，提高搜索效率
+                  <br />
+                  •  使用mq进行消息的异步处理，使请求结果更快返回给用户，提高用户体验
+                  <br />
+                  •  对数据库进行分库分表以适应海量数据
+                  <br />
+                  •  拆分为微服务，各模块多服务器部署，服务间使用rpc通信，提高响应速度
+                  <br />
+                  •  拓展权限模块，使用satoken进行权限管理
+                  <br />
+                  •  使用xxl-job进行定时任务，处理规定时间内未支付订单
                 </>
               }
             />

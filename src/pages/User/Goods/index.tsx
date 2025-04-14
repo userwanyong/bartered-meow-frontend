@@ -138,7 +138,9 @@ const GoodsPage: React.FC = () => {
   // 获取标签列表
   const fetchTagList = async () => {
     try {
-      const res = await listTag();
+      const res = await listTag({
+        tagQueryRequestDTO: {} // 添加必需的空对象参数
+      });
       if (res.data) {
         setTagList(res.data);
       }
