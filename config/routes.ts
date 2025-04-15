@@ -66,4 +66,9 @@ export default [
     component: './User/Password',
     layout: false,
   },
+  {
+    path: '/user/sell',
+    component: './User/SellGoods',
+    layout: false,
+  },
 ];

@@ -5,6 +5,7 @@ import { history, useLocation, useModel, useParams } from '@umijs/max';
 import { Button, Card, Descriptions, Divider, Image, message, Space, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useState } from 'react';
+import { getUserById } from '@/services/user-center/userController'; // 添加导入
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -84,6 +85,31 @@ const useStyles = createStyles(({ token }) => ({
     },
   },
 }));
+
+// 添加UserNickname组件
+const UserNickname: React.FC<{ userId: string }> = ({ userId }) => {
+  const [nickname, setNickname] = useState(userId || '-');
+
+  useEffect(() => {
+    const fetchUserNickname = async () => {
+      if (!userId) {
+        return;
+      }
+      try {
+        const res = await getUserById({ id: userId });
+        if (res.data?.nickname) {
+          setNickname(res.data.nickname);
+        }
+      } catch (error) {
+        // 保持显示userId
+      }
+    };
+
+    fetchUserNickname();
+  }, [userId]);
+
+  return <span>{nickname}</span>;
+};
 
 const GoodsDetail: React.FC = () => {
   const { styles } = useStyles();
@@ -233,7 +259,9 @@ const GoodsDetail: React.FC = () => {
                   <Descriptions.Item label="上架时间">
                     {goodsDetail.created_time || '未知'}
                   </Descriptions.Item>
-                  <Descriptions.Item label="卖家">{goodsDetail.userId || '未知'}</Descriptions.Item>
+                  <Descriptions.Item label="卖家">
+                    <UserNickname userId={goodsDetail.user_id || ''} />
+                  </Descriptions.Item>
                   <Descriptions.Item label="剩余数量">
                     {goodsDetail.current_count || 0}
                   </Descriptions.Item>

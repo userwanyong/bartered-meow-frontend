@@ -4,15 +4,41 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
 import { Button, Image, message, Space, Typography } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react'; // Add useEffect
 import CreateModal from './components/CreateModal';
 import UpdateModal from './components/UpdateModal';
+import { getUserById } from '@/services/user-center/userController'; // 添加导入
 
 /**
  * 商品管理页面
  *
  * @constructor
  */
+// Add UserNickname component
+const UserNickname: React.FC<{ userId: string }> = ({ userId }) => {
+  const [nickname, setNickname] = useState(userId || '-');
+
+  useEffect(() => {
+    const fetchUserNickname = async () => {
+      if (!userId) {
+        return;
+      }
+      try {
+        const res = await getUserById({ id: userId });
+        if (res.data?.nickname) {
+          setNickname(res.data.nickname);
+        }
+      } catch (error) {
+        message.error('获取用户昵称失败');
+      }
+    };
+
+    fetchUserNickname();
+  }, [userId]);
+
+  return <span>{nickname}</span>;
+};
+
 const GoodAdminPage: React.FC = () => {
   // 是否显示新建窗口
   const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
@@ -102,6 +128,15 @@ const GoodAdminPage: React.FC = () => {
         },
       },
     },
+    // 添加创建人userId列
+    {
+      title: '商家',
+      dataIndex: 'userId',
+      copyable: true,
+      ellipsis: true,
+      search: false,
+      render: (_, record) => <UserNickname userId={record.user_id || ''} />,
+    },
     {
       title: '创建时间',
       dataIndex: 'created_time',
@@ -137,7 +172,7 @@ const GoodAdminPage: React.FC = () => {
       ),
     },
   ];
-  
+
   return (
     <PageContainer>
       <ProTable<API.GoodsResponseDTO>
@@ -160,18 +195,18 @@ const GoodAdminPage: React.FC = () => {
           </Button>,
         ]}
         request={async (params, sort, filter) => {
-            // 参数转换，构建符合API要求的参数结构
-            const queryParams = {
-              goodsQueryRequestDTO: {
-                goodName: params.good_name,
-                state: params.state !== undefined ? Number(params.state) : undefined,
-                id: params.id || undefined,
-              }
-            };
-            
-            const goodsList = await listGoodsAdmin(queryParams as API.listGoodsParams);
-            
-            return goodsList;
+          // 参数转换，构建符合API要求的参数结构
+          const queryParams = {
+            goodsQueryRequestDTO: {
+              goodName: params.good_name,
+              state: params.state !== undefined ? Number(params.state) : undefined,
+              id: params.id || undefined,
+            }
+          };
+
+          const goodsList = await listGoodsAdmin(queryParams as API.listGoodsParams);
+
+          return goodsList;
         }}
         columns={columns}
       />
