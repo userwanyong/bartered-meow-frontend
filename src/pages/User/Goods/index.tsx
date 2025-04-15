@@ -106,18 +106,17 @@ const GoodsPage: React.FC = () => {
         } as API.GoodsQueryRequestDTO,
       });
       if (res.data) {
-        // 过滤掉库存为0的商品
-        const availableGoods = res.data.filter((item) => (item.current_count || 0) > 0);
+        const availableGoods = res.data.filter(
+          (item) => (item.current_count || 0) > 0 && item.state === 0
+        );
         setGoodsList(availableGoods);
       }
     } catch (error: any) {
-      // 需要先导入 message 组件
       message.error('获取商品列表失败：' + error.message);
     }
     setLoading(false);
   };
 
-  // 根据标签ID获取商品列表
   const fetchGoodsByTagId = async (tagId: string) => {
     setLoading(true);
     try {
@@ -125,8 +124,10 @@ const GoodsPage: React.FC = () => {
         tagId: tagId,
       });
       if (res.data) {
-        // 过滤掉库存为0的商品
-        const availableGoods = res.data.filter((item) => (item.current_count || 0) > 0);
+        // 过滤掉库存为0和已下架的商品
+        const availableGoods = res.data.filter(
+          (item) => (item.current_count || 0) > 0 && item.state === 0
+        );
         setGoodsList(availableGoods);
       }
     } catch (error: any) {
@@ -139,13 +140,12 @@ const GoodsPage: React.FC = () => {
   const fetchTagList = async () => {
     try {
       const res = await listTag({
-        tagQueryRequestDTO: {} // 添加必需的空对象参数
+        tagQueryRequestDTO: {}
       });
       if (res.data) {
         setTagList(res.data);
       }
     } catch (error: any) {
-      // 需要先导入 message 组件
       message.error('获取标签列表失败：' + error.message);
     }
   };
@@ -240,7 +240,9 @@ const GoodsPage: React.FC = () => {
                           {item.good_description}
                         </Text>
                         <div style={{ marginTop: 8 }}>
-                          <Text className={styles.price}>¥ {item.good_price}</Text>
+                          <Text className={styles.price}>
+                            ¥ {item.good_price?.toFixed(2)}
+                          </Text>
                         </div>
                       </>
                     }

@@ -106,6 +106,10 @@ declare namespace API {
     id: string;
   };
 
+  type getUserByIdParams = {
+    id: string;
+  };
+
   type GoodsAddRequestDTO = {
     state?: number;
     user_id?: string;
@@ -132,8 +136,8 @@ declare namespace API {
 
   type GoodsResponseDTO = {
     id?: string;
-    userId?: string;
     state?: number;
+    user_id?: string;
     good_name?: string;
     good_description?: string;
     good_pic?: string;

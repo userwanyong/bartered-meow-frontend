@@ -3,6 +3,20 @@
 import { request } from '@umijs/max';
 import { API_PREFIX } from '../../../config/api';
 
+/** 此处后端没有提供注释 GET /user/${param0} */
+export async function getUserById(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getUserByIdParams,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.BaseResponseUserResponseDTO>(`${API_PREFIX}/user/${param0}`, {
+    method: 'GET',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 POST /user/add */
 export async function add(body: API.UserAddRequestDTO, options?: { [key: string]: any }) {
   return request<API.BaseResponseBoolean>(`${API_PREFIX}/user/add`, {
