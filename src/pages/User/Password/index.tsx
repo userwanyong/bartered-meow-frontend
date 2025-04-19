@@ -55,7 +55,7 @@ const PasswordPage: React.FC = () => {
         // 使用 Modal 显示成功提示
         Modal.success({
           title: '密码修改成功',
-          content: '请重新登录以确保账户安全',
+          content: '密码修改成功，请重新登录以确保账户安全',
           okText: '确定',
           onOk: () => {
             localStorage.removeItem('token');

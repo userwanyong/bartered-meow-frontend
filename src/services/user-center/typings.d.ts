@@ -218,6 +218,31 @@ declare namespace API {
     aliPay: AliPayRequestDTO;
   };
 
+  type service2Params = {
+    prompt: string;
+    chatId: string;
+  };
+
+  type service3Params = {
+    prompt: string;
+    chatId: string;
+  };
+
+  type service4Params = {
+    prompt: string;
+    chatId: string;
+  };
+
+  type service5Params = {
+    prompt: string;
+    chatId: string;
+  };
+
+  type serviceParams = {
+    prompt: string;
+    chatId: string;
+  };
+
   type TagAddRequestDTO = {
     tag_name?: string;
   };
@@ -261,6 +286,7 @@ declare namespace API {
   };
 
   type UserPasswordRequestDTO = {
+    id?: string;
     old_password?: string;
     new_password?: string;
     confirm_password?: string;
