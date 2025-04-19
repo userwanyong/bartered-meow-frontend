@@ -3,6 +3,20 @@
 import { request } from '@umijs/max';
 import { API_PREFIX } from '../../../config/api';
 
+/** 此处后端没有提供注释 GET /ai/history/${param0} */
+export async function getChatHistory(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getChatHistoryParams,
+  options?: { [key: string]: any },
+) {
+  const { chatId: param0, ...queryParams } = params;
+  return request<API.MessageResponseDTO[]>(`${API_PREFIX}/ai/history/${param0}`, {
+    method: 'GET',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 GET /ai/service */
 export async function service(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

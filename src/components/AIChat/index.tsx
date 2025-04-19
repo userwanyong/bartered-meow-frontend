@@ -2,12 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Input, Button, List, Avatar, Spin, message } from 'antd';
 import { RobotOutlined, SendOutlined, UserOutlined, CloseOutlined } from '@ant-design/icons';
 import { service2 } from '@/services/user-center/aiUserController';
+import { getChatHistory } from '@/services/user-center/aiUserController'; // 导入获取历史记录的函数
 import { getCurrentUser } from '@/services/user-center/userController';
 import { history, useModel } from '@umijs/max';
 import styles from './index.less';
 
 const { TextArea } = Input;
 
+// 消息类型定义
 interface Message {
   content: string;
   type: 'user' | 'ai';
@@ -20,6 +22,7 @@ const AIChat: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible, 
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(false);
+  const [historyLoading, setHistoryLoading] = useState<boolean>(false); // 添加历史记录加载状态
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const initialMessageSent = useRef<boolean>(false);
   const { initialState } = useModel('@@initialState');
@@ -45,6 +48,8 @@ const AIChat: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible, 
     try {
       if (currentUser) {
         setIsUserLoggedIn(true);
+        // 如果用户已登录，加载历史聊天记录
+        loadChatHistory();
       } else {
         setIsUserLoggedIn(false);
         // 如果未登录，添加提示消息
@@ -62,11 +67,42 @@ const AIChat: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible, 
     }
   };
 
-  // 当对话框打开且没有发送过初始消息时，自动发送"你好"
+  // 加载历史聊天记录
+  const loadChatHistory = async () => {
+    if (!currentUser?.id) return;
+    
+    setHistoryLoading(true);
+    try {
+      const response = await getChatHistory({
+        chatId: currentUser.id.toString(),
+      });
+      
+      if (response && response.length > 0) {
+        // 将API返回的历史记录转换为消息格式
+        const historyMessages = response.map(item => ({
+          content: item.content || '',
+          type: item.role === 'user' ? 'user' : 'ai',
+          time: new Date().toLocaleTimeString(),
+        })) as Message[];
+        
+        setMessages(historyMessages);
+        initialMessageSent.current = true; // 已有历史记录，不需要发送初始消息
+      } else if (messages.length === 0) {
+        // 如果没有历史记录且消息列表为空，可以添加一条欢迎消息
+        initialMessageSent.current = true;
+        handleSendMessage("你好");
+      }
+    } catch (error) {
+      console.error('加载历史聊天记录失败:', error);
+      message.error('加载历史聊天记录失败');
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (visible && !initialMessageSent.current && messages.length === 0 && isUserLoggedIn) {
       initialMessageSent.current = true;
-      handleSendMessage("你好");
     }
   }, [visible, isUserLoggedIn]);
 
@@ -88,11 +124,6 @@ const AIChat: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible, 
 
   // 新增一个函数，专门处理发送消息的逻辑
   const handleSendMessage = async (content: string) => {
-    // 如果用户未登录，提示登录
-    if (!isUserLoggedIn) {
-      message.warning('请先登录后再使用AI助手功能');
-      return;
-    }
 
     const userMessage: Message = {
       content: content,
@@ -191,13 +222,15 @@ const AIChat: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible, 
       width={800}
       className={styles.deepseekModal}
       closeIcon={<CloseOutlined className={styles.closeIcon} />}
-      bodyStyle={{ 
-        height: 600, 
-        display: 'flex', 
-        flexDirection: 'column',
-        padding: 0,
-        borderRadius: '12px',
-        overflow: 'hidden'
+      styles={{
+        body: { 
+          height: 600, 
+          display: 'flex', 
+          flexDirection: 'column',
+          padding: 0,
+          borderRadius: '12px',
+          overflow: 'hidden'
+        }
       }}
     >
       <div className={styles.chatHeader}>
@@ -206,46 +239,58 @@ const AIChat: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible, 
       </div>
       
       <div className={styles.chatContainer}>
-        <div className={styles.messageList}>
-          {messages.map((item, index) => (
-            <div 
-              key={index} 
-              className={`${styles.messageItem} ${item.type === 'user' ? styles.userMessageItem : styles.aiMessageItem}`}
-            >
-              <div className={styles.messageAvatar}>
-                {item.type === 'user' ? (
-                  currentUser?.avatar_url ? (
-                    <Avatar src={currentUser.avatar_url} className={styles.userAvatar} />
+        {historyLoading ? (
+          <div className={styles.loadingContainer}>
+            <Spin>
+              <div style={{ padding: '50px', textAlign: 'center' }}>
+                加载历史消息中...
+              </div>
+            </Spin>
+          </div>
+        ) : (
+          <div className={styles.messageList}>
+            {/* 消息列表 */}
+            {messages.map((item, index) => (
+              <div 
+                key={index} 
+                className={`${styles.messageItem} ${item.type === 'user' ? styles.userMessageItem : styles.aiMessageItem}`}
+              >
+                <div className={styles.messageAvatar}>
+                  {item.type === 'user' ? (
+                    currentUser?.avatar_url ? (
+                      <Avatar src={currentUser.avatar_url} className={styles.userAvatar} />
+                    ) : (
+                      <Avatar icon={<UserOutlined />} className={styles.userAvatar} />
+                    )
                   ) : (
-                    <Avatar icon={<UserOutlined />} className={styles.userAvatar} />
-                  )
-                ) : (
-                  <Avatar icon={<RobotOutlined />} className={styles.aiAvatar} />
-                )}
-              </div>
-              <div className={styles.messageContentWrapper}>
-                <div className={styles.messageSender}>
-                  {item.type === 'user' ? (currentUser?.nickname || '我') : 'AI助手'}
+                    <Avatar icon={<RobotOutlined />} className={styles.aiAvatar} />
+                  )}
                 </div>
-                <div className={styles.messageContent}>
-                  {item.content}
-                  {item.isStreaming && <span className={styles.cursor}>|</span>}
+                <div className={styles.messageContentWrapper}>
+                  <div className={styles.messageSender}>
+                    {item.type === 'user' ? (currentUser?.nickname || '我') : 'AI助手'}
+                  </div>
+                  <div className={styles.messageContent}>
+                    {item.content}
+                    {item.isStreaming && <span className={styles.cursor}>|</span>}
+                  </div>
+                  <div className={styles.messageTime}>{item.time}</div>
                 </div>
-                <div className={styles.messageTime}>{item.time}</div>
               </div>
-            </div>
-          ))}
-          {!isUserLoggedIn && (
-            <div className={styles.loginPrompt}>
-              <Button type="primary" onClick={handleLoginClick}>
-                去登录
-              </Button>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+            ))}
+            {!isUserLoggedIn && (
+              <div className={styles.loginPrompt}>
+                <Button type="primary" onClick={handleLoginClick}>
+                  去登录
+                </Button>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
       </div>
       
+      {/* 输入区域 */}
       <div className={styles.inputContainer}>
         <TextArea
           value={inputValue}

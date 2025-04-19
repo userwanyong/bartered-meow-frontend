@@ -102,6 +102,10 @@ declare namespace API {
     id: string;
   };
 
+  type getChatHistoryParams = {
+    chatId: string;
+  };
+
   type getOrderByIdParams = {
     id: string;
   };
@@ -183,6 +187,11 @@ declare namespace API {
 
   type listTagParams = {
     tagQueryRequestDTO: TagQueryRequestDTO;
+  };
+
+  type MessageResponseDTO = {
+    role?: string;
+    content?: string;
   };
 
   type OrderAddRequestDTO = {
