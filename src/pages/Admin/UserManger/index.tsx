@@ -50,7 +50,7 @@ const UserAdminPage: React.FC = () => {
    */
   const columns: ProColumns<API.UserResponseDTO>[] = [
     {
-      title: 'id',
+      title: '身份码',
       dataIndex: 'id',
       copyable: true,
       ellipsis: true,
