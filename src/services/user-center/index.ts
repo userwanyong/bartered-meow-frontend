@@ -8,9 +8,11 @@ import * as cartController from './cartController';
 import * as fileController from './fileController';
 import * as goodsController from './goodsController';
 import * as orderController from './orderController';
+import * as turnoverController from './turnoverController';
 import * as userController from './userController';
 export default {
   userController,
+  turnoverController,
   orderController,
   goodsController,
   fileController,

@@ -72,7 +72,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: '软件工作室',
+  title: '交易喵-智喵集市',
   layout: {
     locale: true,
     ...defaultSettings,

@@ -43,6 +43,12 @@ declare namespace API {
     data?: TagResponseDTO[];
   };
 
+  type BaseResponseListTurnoverResponseDTO = {
+    status?: number;
+    message?: string;
+    data?: TurnoverResponseDTO[];
+  };
+
   type BaseResponseListUserResponseDTO = {
     status?: number;
     message?: string;
@@ -95,6 +101,10 @@ declare namespace API {
   };
 
   type deleteTagParams = {
+    id: string;
+  };
+
+  type deleteTurnoverParams = {
     id: string;
   };
 
@@ -271,6 +281,23 @@ declare namespace API {
   type TagUpdateRequestDTO = {
     id?: string;
     tag_name?: string;
+  };
+
+  type TurnoverResponseDTO = {
+    id?: string;
+    goodId?: string;
+    orderId?: string;
+    buyerId?: string;
+    buyerNickname?: string;
+    sellerId?: string;
+    sellerNickname?: string;
+    goodName?: string;
+    goodDescription?: string;
+    goodPic?: string;
+    goodPrice?: number;
+    num?: number;
+    state?: number;
+    createdTime?: string;
   };
 
   type uploadParams = {
