@@ -43,6 +43,12 @@ declare namespace API {
     data?: TagResponseDTO[];
   };
 
+  type BaseResponseListTurnoverResponseDTO = {
+    status?: number;
+    message?: string;
+    data?: TurnoverResponseDTO[];
+  };
+
   type BaseResponseListUserResponseDTO = {
     status?: number;
     message?: string;
@@ -98,8 +104,16 @@ declare namespace API {
     id: string;
   };
 
+  type deleteTurnoverParams = {
+    id: string;
+  };
+
   type deleteUsingPOSTParams = {
     id: string;
+  };
+
+  type getChatHistoryParams = {
+    chatId: string;
   };
 
   type getOrderByIdParams = {
@@ -185,6 +199,11 @@ declare namespace API {
     tagQueryRequestDTO: TagQueryRequestDTO;
   };
 
+  type MessageResponseDTO = {
+    role?: string;
+    content?: string;
+  };
+
   type OrderAddRequestDTO = {
     id?: string;
     name?: string;
@@ -218,6 +237,31 @@ declare namespace API {
     aliPay: AliPayRequestDTO;
   };
 
+  type service2Params = {
+    prompt: string;
+    chatId: string;
+  };
+
+  type service3Params = {
+    prompt: string;
+    chatId: string;
+  };
+
+  type service4Params = {
+    prompt: string;
+    chatId: string;
+  };
+
+  type service5Params = {
+    prompt: string;
+    chatId: string;
+  };
+
+  type serviceParams = {
+    prompt: string;
+    chatId: string;
+  };
+
   type TagAddRequestDTO = {
     tag_name?: string;
   };
@@ -239,6 +283,23 @@ declare namespace API {
     tag_name?: string;
   };
 
+  type TurnoverResponseDTO = {
+    id?: string;
+    goodId?: string;
+    orderId?: string;
+    buyerId?: string;
+    buyerNickname?: string;
+    sellerId?: string;
+    sellerNickname?: string;
+    goodName?: string;
+    goodDescription?: string;
+    goodPic?: string;
+    goodPrice?: number;
+    num?: number;
+    state?: number;
+    createdTime?: string;
+  };
+
   type uploadParams = {
     file: string;
   };
@@ -255,12 +316,20 @@ declare namespace API {
     avatar_url?: string;
   };
 
+  type UserForgotPasswordRequestDTO = {
+    id?: string;
+    username?: string;
+    phone?: string;
+    email?: string;
+  };
+
   type UserLoginRequestDTO = {
     username?: string;
     password?: string;
   };
 
   type UserPasswordRequestDTO = {
+    id?: string;
     old_password?: string;
     new_password?: string;
     confirm_password?: string;
@@ -283,6 +352,13 @@ declare namespace API {
     username?: string;
     password?: string;
     check_password?: string;
+  };
+
+  type UserResetPasswordRequestDTO = {
+    username?: string;
+    old_password?: string;
+    new_password?: string;
+    confirm_password?: string;
   };
 
   type UserResponseDTO = {

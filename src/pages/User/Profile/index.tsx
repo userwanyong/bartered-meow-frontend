@@ -1,9 +1,10 @@
-import UserInfo from '@/components/UserInfo'; // 添加这行
+import UserInfo from '@/components/UserInfo';
 import { update } from '@/services/user-center/userController';
 import { useModel } from '@umijs/max';
-import { Button, Card, Form, Input, message, Select, Typography } from 'antd';
+import { Button, Card, Form, Input, message, Select, Typography, Tooltip, Space, Modal } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useState } from 'react';
+import { EyeOutlined, EyeInvisibleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -70,6 +71,28 @@ const ProfilePage: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [uploadLoading, setUploadLoading] = useState(false); // 添加上传loading状态
+  const [showIdCode, setShowIdCode] = useState(false);
+
+  // 处理显示身份码的函数
+  const handleShowIdCode = () => {
+    if (!showIdCode) {
+      Modal.confirm({
+        title: '安全提示',
+        icon: <ExclamationCircleOutlined style={{ color: '#faad14' }} />,
+        content: '身份码是您的唯一标识，请妥善保管，不要随意透露给他人。确定要查看吗？',
+        okText: '确认查看',
+        cancelText: '取消',
+        onOk: () => {
+          setShowIdCode(true);
+        },
+        centered: true, // 添加此属性使弹窗居中显示
+        maskClosable: false, // 点击蒙层不关闭
+        className: 'id-code-modal' // 添加自定义类名，方便后续样式调整
+      });
+    } else {
+      setShowIdCode(false);
+    }
+  };
 
   const handleUpload = async (file: File) => {
     try {
@@ -170,6 +193,7 @@ const ProfilePage: React.FC = () => {
             layout="vertical"
             className={styles.form}
             initialValues={{
+              id: currentUser?.id,
               nickname: currentUser?.nickname,
               gender: currentUser?.gender,
               phone: currentUser?.phone,
@@ -182,6 +206,33 @@ const ProfilePage: React.FC = () => {
             <Form.Item name="avatar_url" hidden>
               <Input />
             </Form.Item>
+            <Form.Item
+              label={
+                <Space>
+                  <span>身份码</span>
+                  <Tooltip title="身份码是您的唯一标识，请妥善保管，不要随意透露给他人">
+                    <ExclamationCircleOutlined style={{ color: '#faad14' }} />
+                  </Tooltip>
+                </Space>
+              }
+              name="id"
+            >
+              <Input 
+                placeholder="身份码" 
+                disabled={true}
+                type={showIdCode ? "text" : "password"}
+                suffix={
+                  <Button 
+                    type="text" 
+                    icon={showIdCode ? <EyeInvisibleOutlined /> : <EyeOutlined />} 
+                    onClick={handleShowIdCode}
+                    style={{ border: 'none' }}
+                  />
+                }
+                style={{ backgroundColor: '#f5f5f5', height: '32px', lineHeight: '32px' }}
+              />
+            </Form.Item>
+            
             <Form.Item
               label="昵称"
               name="nickname"

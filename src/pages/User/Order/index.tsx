@@ -67,7 +67,7 @@ const OrderPage: React.FC = () => {
   const [newOrderId, setNewOrderId] = useState<string | null>(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  
+
   // 获取订单数据
   const fetchOrders = async () => {
     setLoading(true);
@@ -203,8 +203,8 @@ const OrderPage: React.FC = () => {
       setSelectedRowKeys(newSelectedRowKeys);
     },
     getCheckboxProps: (record: API.OrderResponseDTO) => ({
-      // 只允许选择已取消的订单进行删除
-      disabled: record.state !== 4,
+      // 1->待发货；2->已发货；时订单不能取消
+      disabled: record.state == 1 || record.state == 2,
     }),
   };
 
@@ -334,14 +334,14 @@ const OrderPage: React.FC = () => {
       onOk: async () => {
         try {
           setLoading(true);
-          
+
           // 查找当前订单信息
           const currentOrder = orders.find(order => order.id === orderId);
           if (!currentOrder) {
             message.error('订单信息不完整');
             return;
           }
-          
+
           // 调用退款接口
           const response = await returnPay({
             orderId,
@@ -351,7 +351,7 @@ const OrderPage: React.FC = () => {
               alipayTraceNo: currentOrder.pay_no || null, // 支付宝交易号
             }
           } as any);
-          
+
           if (response.status === 200) {
             message.success('退款成功');
             // 刷新订单列表
@@ -371,33 +371,33 @@ const OrderPage: React.FC = () => {
   const handlePay = async (orderId: string) => {
     try {
       setLoading(true);
-      
+
       // 先查询订单详情，获取订单信息
       const orderDetailResponse = await getOrderById({ id: orderId });
       if (!orderDetailResponse.data || orderDetailResponse.status !== 200) {
         message.error('获取订单信息失败');
         return;
       }
-      
+
       // 获取订单的第一个商品作为订单标题
       const orderItem = orderDetailResponse.data[0];
       if (!orderItem) {
         message.error('订单信息不完整');
         return;
       }
-      
+
       // 查找当前订单信息
       const currentOrder = orders.find(order => order.id === orderId);
       if (!currentOrder) {
         message.error('订单信息不完整');
         return;
       }
-      
+
       // 获取当前域名和端口，用于构建回调URL
       const { protocol, hostname, port } = window.location;
       const baseUrl = `${protocol}//${hostname}${port ? `:${port}` : ''}`;
       const returnUrl = `${baseUrl}/user/orders`;
-      
+
       // 构建支付参数，将参数放在aliPay对象中
       const payParams = {
         orderId,
@@ -409,16 +409,16 @@ const OrderPage: React.FC = () => {
           returnUrl: returnUrl // 支付成功后的回调URL
         }
       };
-      
+
       // 调用支付接口
       const response = await pay(payParams as any);
-      
+
       if (response) {
         // 创建一个隐藏的div来放置支付宝返回的表单
         const div = document.createElement('div');
         div.innerHTML = response;
         document.body.appendChild(div);
-        
+
         // 提交表单，跳转到支付宝支付页面
         const form = div.getElementsByTagName('form')[0];
         if (form) {
@@ -472,6 +472,7 @@ const OrderPage: React.FC = () => {
 
           {orders.length > 0 ? (
             <Table
+              className="custom-table"
               rowKey="id"
               rowSelection={rowSelection}
               columns={[
@@ -500,39 +501,39 @@ const OrderPage: React.FC = () => {
                   dataIndex: 'time',
                   key: 'time',
                 },
-                
-                  // 在表格列定义中修改操作列
-                  {
-                    title: '操作',
-                    key: 'action',
-                    render: (_, record: API.OrderResponseDTO) => (
-                      <Space size="middle">
-                        <Button type="link" onClick={() => handleViewDetail(record.id as any)}>
-                          查看详情
+
+                // 在表格列定义中修改操作列
+                {
+                  title: '操作',
+                  key: 'action',
+                  render: (_, record: API.OrderResponseDTO) => (
+                    <Space size="middle">
+                      <Button type="link" onClick={() => handleViewDetail(record.id as any)}>
+                        查看详情
+                      </Button>
+                      {record.state === 0 && (
+                        <>
+                          <Button type="link" onClick={() => handlePay(record.id as any)}>
+                            去支付
+                          </Button>
+                          <Button type="link" danger onClick={() => handleCancelOrder(record.id as any)}>
+                            取消订单
+                          </Button>
+                        </>
+                      )}
+                      {record.state === 1 && (
+                        <Button type="link" onClick={() => handleRefund(record.id as any)}>
+                          申请退款
                         </Button>
-                        {record.state === 0 && (
-                          <>
-                            <Button type="link" onClick={() => handlePay(record.id as any)}>
-                              去支付
-                            </Button>
-                            <Button type="link" danger onClick={() => handleCancelOrder(record.id as any)}>
-                              取消订单
-                            </Button>
-                          </>
-                        )}
-                        {record.state === 1 && (
-                          <Button type="link" onClick={() => handleRefund(record.id as any)}>
-                            申请退款
-                          </Button>
-                        )}
-                        {record.state === 4 && (
-                          <Button type="link" danger onClick={() => handleDeleteOrder(record.id as any)}>
-                            删除订单
-                          </Button>
-                        )}
-                      </Space>
-                    ),
-                  }
+                      )}
+                      {(record.state !== 1 && record.state !== 2) && (
+                        <Button type="link" danger onClick={() => handleDeleteOrder(record.id as any)}>
+                          删除订单
+                        </Button>
+                      )}
+                    </Space>
+                  ),
+                }
               ]}
               dataSource={orders}
               pagination={{ pageSize: 10 }}
@@ -560,5 +561,13 @@ const OrderPage: React.FC = () => {
 
   // At the end of the file, make sure the export is correct
 };
+// 添加自定义样式
+const styleSheet = document.createElement('style');
+styleSheet.innerText = `
+  .custom-table .ant-table-row-selected > td {
+    background-color: transparent !important;
+  }
+`;
+document.head.appendChild(styleSheet);
 
 export default OrderPage;

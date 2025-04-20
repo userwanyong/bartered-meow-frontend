@@ -300,7 +300,7 @@ const Cart: React.FC = () => {
           <Image
             src={record.goods?.good_pic}
             alt={record.goods?.good_name}
-            className={styles.productImage}
+            style={{ width: '70px', height: '70px', objectFit: 'cover' }}
             preview={false}
           />
           <div style={{ marginLeft: 16 }}>

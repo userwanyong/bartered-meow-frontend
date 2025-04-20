@@ -117,8 +117,8 @@ const Register: React.FC = () => {
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src="/logo.svg" />}
-          title="用户中心"
+          logo={<img alt="logo" src="/logo.png" />}
+          title="交易喵"
           subTitle={'    '}
           initialValues={{
             autoLogin: true,
@@ -126,6 +126,14 @@ const Register: React.FC = () => {
           onFinish={async (values) => {
             await handleSubmit(values as API.UserRegisterRequestDTO);
           }}
+          actions={
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              <span>已有账号？</span>
+              <a style={{ fontWeight: 'bold', marginLeft: '8px' }} onClick={() => history.push('/user/login')}>
+                立即登录
+              </a>
+            </div>
+          }
         >
           <Tabs
             activeKey={type}

@@ -116,7 +116,7 @@ const Welcome: React.FC = () => {
               color: token.colorTextHeading,
             }}
           >
-            交易喵-基于AI的二手交易平台
+            交易喵-AI交易平台
           </div>
           <p
             style={{
@@ -150,6 +150,8 @@ const Welcome: React.FC = () => {
                   <br />
                   •  修改密码 [第一阶段]
                   <br />
+                  •  忘记密码 [第一阶段]
+                  <br />
                   •  我要买 [第一阶段]
                   <br />
                   •  我要卖（CRUD） [第一阶段]
@@ -157,6 +159,8 @@ const Welcome: React.FC = () => {
                   •  我的购物车（收藏）[第一阶段]
                   <br />
                   •  我的订单  [第一阶段]
+                  <br />
+                  •  我的成交记录  [第一阶段]
                   <br />
                   <div style={{ fontWeight: 'bold', fontSize: '16px' }}>管理端</div>
                   •  用户管理  [第一阶段]

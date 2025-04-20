@@ -71,4 +71,9 @@ export default [
     component: './User/SellGoods',
     layout: false,
   },
+  {
+    path: '/user/turnover',
+    component: './User/Turnover',
+    layout: false,
+  },
 ];

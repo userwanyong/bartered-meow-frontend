@@ -4,6 +4,8 @@ import { history, useModel } from '@umijs/max';
 import { Card, Image, Input, List, Menu, message, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useState } from 'react';
+import { RobotOutlined } from '@ant-design/icons'; // 添加机器人图标
+import AIChat from '@/components/AIChat'; // 导入AI聊天组件
 
 const { Search } = Input;
 const { Text, Title } = Typography;
@@ -82,6 +84,53 @@ const useStyles = createStyles(({ token }) => {
       fontSize: '20px',
       fontWeight: 'bold',
     },
+    aiFloatingButton: {
+      position: 'relative',
+      '&:hover': {
+        transform: 'scale(1.1)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+      },
+      '&:hover .aiTooltip': {
+        opacity: 1,
+        visibility: 'visible',
+        transform: 'translateY(0)',
+      }
+    },
+    
+    aiFloatingIcon: {
+      fontSize: '24px',
+      transition: 'all 0.3s',
+      '&:hover': {
+        fontSize: '30px',
+      },
+    },
+    
+    aiTooltip: {
+      position: 'absolute',
+      bottom: '100%',
+      left: '50%',
+      transform: 'translateX(-50%) translateY(10px)',
+      backgroundColor: 'white',
+      color: '#333',
+      padding: '8px 12px',
+      borderRadius: '6px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+      whiteSpace: 'nowrap',
+      fontSize: '14px',
+      marginBottom: '10px',
+      opacity: 0,
+      visibility: 'hidden',
+      transition: 'all 0.3s ease',
+      '&:after': {
+        content: '""',
+        position: 'absolute',
+        top: '10%', // 箭头位于气泡底部
+        left: '50%',
+        transform: 'translateX(-50%)',
+        border: '6px solid transparent',
+        borderTopColor: 'white', // 箭头朝下，所以是顶部边框有颜色
+      }
+    },
   };
 });
 
@@ -94,6 +143,8 @@ const GoodsPage: React.FC = () => {
   const [tagList, setTagList] = useState<API.TagResponseDTO[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedTagId, setSelectedTagId] = useState<string>('');
+  // 将AI聊天状态移到组件内部
+  const [aiChatVisible, setAiChatVisible] = useState<boolean>(false);
 
   // 获取商品列表
   const fetchGoodsList = async (searchKey?: string) => {
@@ -253,6 +304,38 @@ const GoodsPage: React.FC = () => {
           />
         </div>
       </div>
+      
+      {/* 添加悬浮AI按钮 */}
+      <div 
+        style={{
+          position: 'fixed',
+          left: '20px',
+          bottom: '100px',
+          backgroundColor: '#1890ff',
+          color: 'white',
+          width: '50px',
+          height: '50px',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          zIndex: 1000,
+          transition: 'all 0.3s',
+        }}
+        onClick={() => setAiChatVisible(true)}
+        className={styles.aiFloatingButton}
+      >
+        <div className={`${styles.aiTooltip} aiTooltip`}>我是你的智能ai助手</div>
+        <RobotOutlined className={styles.aiFloatingIcon} />
+      </div>
+      
+      {/* 添加AI聊天组件 */}
+      <AIChat 
+        visible={aiChatVisible}
+        onClose={() => setAiChatVisible(false)}
+      />
     </div>
   );
 };
