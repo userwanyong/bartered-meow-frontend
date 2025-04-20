@@ -289,6 +289,13 @@ declare namespace API {
     avatar_url?: string;
   };
 
+  type UserForgotPasswordRequestDTO = {
+    id?: string;
+    username?: string;
+    phone?: string;
+    email?: string;
+  };
+
   type UserLoginRequestDTO = {
     username?: string;
     password?: string;
@@ -318,6 +325,13 @@ declare namespace API {
     username?: string;
     password?: string;
     check_password?: string;
+  };
+
+  type UserResetPasswordRequestDTO = {
+    username?: string;
+    old_password?: string;
+    new_password?: string;
+    confirm_password?: string;
   };
 
   type UserResponseDTO = {

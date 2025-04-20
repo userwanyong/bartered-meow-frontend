@@ -55,7 +55,7 @@ const AIChat: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible, 
         // 如果未登录，添加提示消息
         setMessages([
           {
-            content: '您需要先登录才能使用AI助手功能。',
+            content: '您需要先登录才能使用AI助手功能 (^_^)',
             type: 'ai',
             time: new Date().toLocaleTimeString(),
           }

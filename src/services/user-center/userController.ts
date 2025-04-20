@@ -19,7 +19,22 @@ export async function getUserById(
 
 /** 此处后端没有提供注释 POST /user/add */
 export async function add(body: API.UserAddRequestDTO, options?: { [key: string]: any }) {
-  return request<API.BaseResponseBoolean>(`${API_PREFIX}/user/add`, {
+  return request<API.BaseResponseString>(`${API_PREFIX}/user/add`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 POST /user/check */
+export async function forgot(
+  body: API.UserForgotPasswordRequestDTO,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseString>(`${API_PREFIX}/user/check`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -83,6 +98,21 @@ export async function login(body: API.UserLoginRequestDTO, options?: { [key: str
 /** 此处后端没有提供注释 POST /user/register */
 export async function register(body: API.UserRegisterRequestDTO, options?: { [key: string]: any }) {
   return request<API.BaseResponseBoolean>(`${API_PREFIX}/user/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 POST /user/reset/password */
+export async function resetPassword(
+  body: API.UserResetPasswordRequestDTO,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/user/reset/password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -14,13 +14,6 @@ const Footer: React.FC = () => {
           href: '',
           blankTarget: true,
         },
-
-        {
-          key: 'Cat_shop',
-          title: '交易喵制作组',
-          href: '',
-          blankTarget: true,
-        },
       ]}
     />
   );
