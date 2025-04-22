@@ -10,6 +10,8 @@ import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import Settings from '../../../../config/defaultSettings';
 
+import { login1 } from '@/services/user-center/authController';
+
 const useStyles = createStyles(({ token }) => {
   return {
     action: {
@@ -45,7 +47,23 @@ const useStyles = createStyles(({ token }) => {
     },
   };
 });
-
+// 处理Gitee登录
+const handleGiteeLogin = async () => {
+  try {
+    window.location.href = "http://47.104.212.220:8066/api/oauth/login/gitee";
+    // // 调用login1方法获取授权URL
+    // const response = await login1({ type: 'gitee' });
+    
+    // // 如果返回了URL，直接跳转到授权页面
+    // if (response && response.data) {
+    //   window.location.href = response.data;
+    // } else {
+    //   message.error('获取Gitee授权链接失败');
+    // }
+  } catch (error) {
+    message.error('获取Gitee授权链接失败');
+  }
+};
 const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<API.UserLoginRequestDTO>({});
   const [type, setType] = useState<string>('account');
@@ -292,6 +310,25 @@ const Login: React.FC = () => {
           submitter={{
             searchConfig: {
               submitText: '登录',
+              resetText: '重置',
+            },
+            // 修改这里，确保在gitee登录时不显示按钮，在账号密码登录时只显示登录按钮
+            render: (props, dom) => {
+              return type === 'gitee' ? null : (
+                <Button 
+                  type="primary" 
+                  key="submit" 
+                  onClick={() => props.form?.submit?.()} 
+                  size="large"
+                  style={{ 
+                    width: '100%', 
+                    height: '40px',
+                    fontSize: '16px'
+                  }}
+                >
+                  登录
+                </Button>
+              );
             },
           }}
           contentStyle={{
@@ -325,6 +362,10 @@ const Login: React.FC = () => {
                 key: 'account',
                 label: '账户密码登录',
               },
+              {
+                key: 'gitee',
+                label: 'Gitee登录',
+              }
             ]}
           />
 
@@ -370,22 +411,66 @@ const Login: React.FC = () => {
                   },
                 ]}
               />
+              <div
+                style={{
+                  marginBottom: 24,
+                }}
+              >
+                <ProFormCheckbox noStyle name="autoLogin">
+                  自动登录
+                </ProFormCheckbox>
+
+                <a style={{ float: 'right' }} onClick={handleForgotPassword}>
+                  忘记密码
+                </a>
+              </div>
             </>
           )}
 
-          <div
-            style={{
-              marginBottom: 24,
-            }}
-          >
-            <ProFormCheckbox noStyle name="autoLogin">
-              自动登录
-            </ProFormCheckbox>
-
-            <a style={{ float: 'right' }} onClick={handleForgotPassword}>
-              忘记密码
-            </a>
-          </div>
+          {type === 'gitee' && (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '30px 0',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}>
+              <div style={{ 
+                marginBottom: '30px',
+                fontSize: '16px',
+                color: 'rgba(0, 0, 0, 0.65)'
+              }}>
+                使用Gitee账号安全登录
+              </div>
+              <Button 
+                type="primary" 
+                size="large" 
+                onClick={handleGiteeLogin}
+                style={{ 
+                  width: '80%', 
+                  height: '50px',
+                  fontSize: '16px',
+                  borderRadius: '25px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)'
+                }}
+                icon={<img 
+                  src="/gitee-logo.svg" 
+                  alt="Gitee" 
+                  style={{ 
+                    width: '24px', 
+                    height: '24px', 
+                    marginRight: '8px' 
+                  }} 
+                />}
+              >
+                点击授权登录
+              </Button>
+              {/* 移除了多余的登录按钮 */}
+            </div>
+          )}
         </LoginForm>
       </div>
       <Footer />
