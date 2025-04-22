@@ -7,6 +7,15 @@ declare namespace API {
     returnUrl?: string;
   };
 
+  type AuthCallback = {
+    code?: string;
+    auth_code?: string;
+    state?: string;
+    authorization_code?: string;
+    oauth_token?: string;
+    oauth_verifier?: string;
+  };
+
   type BaseResponse = {
     status?: number;
     message?: string;
@@ -197,6 +206,35 @@ declare namespace API {
 
   type listTagParams = {
     tagQueryRequestDTO: TagQueryRequestDTO;
+  };
+
+  type login1Params = {
+    type: string;
+  };
+
+  type login2Params = {
+    type: string;
+    callback: AuthCallback;
+  };
+
+  type login4Params = {
+    type: string;
+    callback: AuthCallback;
+  };
+
+  type login5Params = {
+    type: string;
+    callback: AuthCallback;
+  };
+
+  type login6Params = {
+    type: string;
+    callback: AuthCallback;
+  };
+
+  type login7Params = {
+    type: string;
+    callback: AuthCallback;
   };
 
   type MessageResponseDTO = {

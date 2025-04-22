@@ -5,6 +5,11 @@ export default [
     routes: [
       { name: '登录', path: '/user/login', component: './User/Login' },
       { name: '注册', path: '/user/register', component: './User/Register' },
+      // 添加OAuth回调路由
+      {
+        path: '/user/oauth/:type/callback',
+        component: './User/OAuthCallback',
+      },
     ],
   },
 

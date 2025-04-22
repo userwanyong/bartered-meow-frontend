@@ -4,6 +4,7 @@
 // API 唯一标识：
 import * as aiUserController from './aiUserController';
 import * as aliPayController from './aliPayController';
+import * as authController from './authController';
 import * as cartController from './cartController';
 import * as fileController from './fileController';
 import * as goodsController from './goodsController';
@@ -18,5 +19,6 @@ export default {
   fileController,
   cartController,
   aliPayController,
+  authController,
   aiUserController,
 };
