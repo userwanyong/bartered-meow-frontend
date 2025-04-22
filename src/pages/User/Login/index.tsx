@@ -50,7 +50,7 @@ const useStyles = createStyles(({ token }) => {
 // 处理Gitee登录
 const handleGiteeLogin = async () => {
   try {
-    window.location.href = "http://127.0.0.1:8066/api/oauth/login/gitee";
+    window.location.href = "http://47.104.212.220:8066/api/oauth/login/gitee";
     // // 调用login1方法获取授权URL
     // const response = await login1({ type: 'gitee' });
     
