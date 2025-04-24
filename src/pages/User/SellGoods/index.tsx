@@ -1,18 +1,18 @@
 import { deleteGoodsById, listGoods } from '@/services/user-center/goodsController';
-import { PlusOutlined, ShoppingOutlined } from '@ant-design/icons'; // 添加ShoppingOutlined图标
+import { PlusOutlined, ShoppingOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Image, message, Space, Typography, Divider } from 'antd'; // 添加Divider和Typography
-import React, { useRef, useState } from 'react';
+import { Button, Image, message, Space, Typography, Divider } from 'antd';
+import React, { useRef, useState, useEffect } from 'react';
 import CreateModal from './components/CreateModal';
 import UpdateModal from './components/UpdateModal';
 import UserInfo from '@/components/UserInfo';
 import { createStyles } from 'antd-style';
 
-const { Title } = Typography; // 添加Title组件
+const { Title } = Typography;
 
-// 创建样式
+// 创建响应式样式
 const useStyles = createStyles(({ token }) => ({
   topBar: {
     width: '100%',
@@ -22,11 +22,26 @@ const useStyles = createStyles(({ token }) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '0 50px',
+    padding: '0 16px',
     position: 'fixed',
     top: 0,
     left: 0,
     zIndex: 1000,
+    '@media (min-width: 768px)': {
+      padding: '0 50px',
+    },
+  },
+  container: {
+    marginTop: '60px',
+    padding: '16px',
+    '@media (min-width: 768px)': {
+      maxWidth: '1200px',
+      margin: '60px auto 0',
+      padding: '24px',
+    },
+  },
+  tableWrapper: {
+    overflowX: 'auto',
   },
 }));
 
@@ -36,14 +51,24 @@ const useStyles = createStyles(({ token }) => ({
  * @constructor
  */
 const UserSellGoodsPage: React.FC = () => {
-  const { styles } = useStyles(); // 使用样式
-  // 是否显示新建窗口
+  const { styles } = useStyles();
   const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
-  // 是否显示更新窗口
   const [updateModalVisible, setUpdateModalVisible] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
-  // 当前商品点击的数据
   const [currentRow, setCurrentRow] = useState<API.GoodsResponseDTO>();
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+
+  // 监听窗口大小变化
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   /**
    * 删除商品
@@ -77,7 +102,7 @@ const UserSellGoodsPage: React.FC = () => {
       dataIndex: 'good_name',
       copyable: true,
       ellipsis: true,
-      search: false, // 移除搜索功能
+      search: false,
     },
     {
       title: '商品描述',
@@ -85,6 +110,7 @@ const UserSellGoodsPage: React.FC = () => {
       copyable: true,
       ellipsis: true,
       search: false,
+      hideInTable: windowWidth < 768, // 小屏幕下隐藏
     },
     {
       title: '商品图片',
@@ -118,7 +144,7 @@ const UserSellGoodsPage: React.FC = () => {
           status: 'Error',
         },
       },
-      search: false, // 移除搜索功能
+      search: false,
     },
     {
       title: '创建时间',
@@ -126,6 +152,7 @@ const UserSellGoodsPage: React.FC = () => {
       valueType: 'dateTime',
       editable: false,
       search: false,
+      hideInTable: windowWidth < 768, // 小屏幕下隐藏
     },
     {
       title: '操作',
@@ -151,23 +178,16 @@ const UserSellGoodsPage: React.FC = () => {
   
   return (
     <>
-      {/* 添加顶部导航栏 */}
       <div className={styles.topBar}>
         <UserInfo />
       </div>
       
-      {/* 调整PageContainer的样式，为顶部导航栏留出空间 */}
       <PageContainer
-        style={{ 
-          marginTop: '60px',
-          maxWidth: '1200px',  // 设置最大宽度
-          margin: '60px auto 0', // 上边距60px，左右居中
-        }}
+        className={styles.container}
         header={{
-          title: false, // 隐藏默认标题
+          title: false,
         }}
       >
-        {/* 添加与订单页面一致的标题样式 */}
         <div
           style={{
             display: 'flex',
@@ -194,22 +214,30 @@ const UserSellGoodsPage: React.FC = () => {
 
         <Divider />
 
-        <ProTable<API.GoodsResponseDTO>
-          headerTitle={false} // 隐藏ProTable的标题
-          actionRef={actionRef}
-          rowKey="id"
-          search={false}
-          toolBarRender={false} // 隐藏工具栏
-          request={async () => {
-            // 直接调用listGoods，不传递任何查询参数
-            const goodsList = await listGoods({
-              goodsQueryRequestDTO: {}
-            });
-            
-            return goodsList;
-          }}
-          columns={columns}
-        />
+        <div className={styles.tableWrapper}>
+          <ProTable<API.GoodsResponseDTO>
+            headerTitle={false}
+            actionRef={actionRef}
+            rowKey="id"
+            search={false}
+            toolBarRender={false}
+            scroll={{ x: 'max-content' }}
+            pagination={{
+              defaultPageSize: 10,
+              showSizeChanger: windowWidth >= 768,
+              size: windowWidth < 768 ? 'small' : 'default',
+            }}
+            request={async () => {
+              const goodsList = await listGoods({
+                goodsQueryRequestDTO: {}
+              });
+              
+              return goodsList;
+            }}
+            columns={columns}
+          />
+        </div>
+        
         <CreateModal
           visible={createModalVisible}
           onSubmit={() => {
@@ -236,4 +264,5 @@ const UserSellGoodsPage: React.FC = () => {
     </>
   );
 };
+
 export default UserSellGoodsPage;

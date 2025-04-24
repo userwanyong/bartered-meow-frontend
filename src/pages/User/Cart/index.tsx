@@ -20,6 +20,7 @@ import {
   Space,
   Table,
   Typography,
+  App,
 } from 'antd';
 import { createStyles } from 'antd-style';
 import type { ColumnsType } from 'antd/es/table';
@@ -85,11 +86,38 @@ const useStyles = createStyles(({ token }) => ({
   },
   checkoutSection: {
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '16px 24px',
+    flexDirection: 'column',
+    padding: '16px',
     background: '#f9f9f9',
     borderRadius: '0 0 8px 8px',
+    '@media (min-width: 768px)': {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '16px 24px',
+    },
+  },
+  checkoutInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginBottom: '16px',
+    '@media (min-width: 768px)': {
+      marginBottom: 0,
+    },
+  },
+  checkoutActions: {
+    display: 'flex',
+    flexDirection: 'column',
+    '@media (min-width: 768px)': {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+  },
+  checkoutTotalPrice: {
+    color: token.colorError,
+    fontSize: '24px',
+    fontWeight: 'bold',
+    marginLeft: '8px',
   },
 }));
 
@@ -178,19 +206,28 @@ const Cart: React.FC = () => {
 
   // 从购物车中移除商品
   const handleRemoveItem = async (id: string) => {
-    try {
-      const response = await deleteCart({ id });
-      if (response.status === 200) {
-        // 更新本地状态
-        setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
-        message.success('商品已从购物车中移除');
-      } else {
-        message.error(response.message);
-      }
-    } catch (error) {
-      message.error('移除商品失败');
-      console.error('移除商品失败:', error);
-    }
+    // 添加确认对话框
+    Modal.confirm({
+      title: '确认删除',
+      content: '确定要从购物车中删除此商品吗？',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const response = await deleteCart({ id });
+          if (response.status === 200) {
+            // 更新本地状态
+            setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+            message.success('商品已从购物车中移除');
+          } else {
+            message.error(response.message);
+          }
+        } catch (error) {
+          message.error('移除商品失败');
+          console.error('移除商品失败:', error);
+        }
+      },
+    });
   };
 
   // 选择/取消选择单个商品
@@ -438,20 +475,24 @@ const Cart: React.FC = () => {
             />
 
             <div className={styles.checkoutSection}>
-              <div>
+              <div className={styles.checkoutInfo}>
                 <div>
                   已选商品 <Text strong>{cartItems.filter((item) => item.selected).length}</Text> 件
                 </div>
+                <div>
+                  合计: <Text className={styles.totalPrice}>¥ {calculateTotal().toFixed(2)}</Text>
+                </div>
               </div>
-              <div>
-                <Space size="large">
-                  <div>
-                    合计: <Text className={styles.totalPrice}>¥ {calculateTotal().toFixed(2)}</Text>
-                  </div>
-                  <Button type="primary" size="large" onClick={handleCheckout} loading={loading}>
-                    结算
-                  </Button>
-                </Space>
+              <div className={styles.checkoutActions}>
+                <Button 
+                  type="primary" 
+                  size="large" 
+                  onClick={handleCheckout} 
+                  loading={loading}
+                  style={{ width: '100%' }}
+                >
+                  结算
+                </Button>
               </div>
             </div>
           </>
@@ -474,4 +515,11 @@ const Cart: React.FC = () => {
   );
 };
 
-export default Cart;
+// 使用App组件包装以解决message警告
+const CartWithApp: React.FC = () => (
+  <App>
+    <Cart />
+  </App>
+);
+
+export default CartWithApp;

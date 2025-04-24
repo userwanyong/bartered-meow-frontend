@@ -1,9 +1,9 @@
 import UserInfo from '@/components/UserInfo';
 import { update } from '@/services/user-center/userController';
 import { useModel } from '@umijs/max';
-import { Button, Card, Form, Input, message, Select, Typography, Tooltip, Space, Modal } from 'antd';
+import { Button, Card, Form, Input, message, Select, Typography, Tooltip, Space, Modal, App } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { EyeOutlined, EyeInvisibleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
@@ -70,8 +70,25 @@ const ProfilePage: React.FC = () => {
   const { currentUser } = initialState || {};
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [uploadLoading, setUploadLoading] = useState(false); // 添加上传loading状态
+  const [uploadLoading, setUploadLoading] = useState(false);
   const [showIdCode, setShowIdCode] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(currentUser?.avatar_url);
+  const { message: messageApi } = App.useApp();
+
+  // Initialize form values when currentUser changes
+  useEffect(() => {
+    if (currentUser) {
+      form.setFieldsValue({
+        id: currentUser.id,
+        nickname: currentUser.nickname,
+        gender: currentUser.gender,
+        phone: currentUser.phone,
+        email: currentUser.email,
+        avatar_url: currentUser.avatar_url,
+      });
+      setAvatarUrl(currentUser.avatar_url);
+    }
+  }, [currentUser, form]);
 
   // 处理显示身份码的函数
   const handleShowIdCode = () => {
@@ -101,13 +118,15 @@ const ProfilePage: React.FC = () => {
       formData.append('file', file);
       const res = await upload(formData);
       if (res.status === 200 && res.message) {
-        form.setFieldValue('avatar_url', res.message);
-        message.success('上传成功');
+        const newAvatarUrl = res.message;
+        form.setFieldValue('avatar_url', newAvatarUrl);
+        setAvatarUrl(newAvatarUrl);
+        messageApi.success('上传成功');
       } else {
-        message.error(res.message);
+        messageApi.error(res.message);
       }
     } catch (error: any) {
-      message.error('上传失败：' + error.message);
+      messageApi.error('上传失败：' + error.message);
     } finally {
       setUploadLoading(false);
     }
@@ -151,26 +170,26 @@ const ProfilePage: React.FC = () => {
             listType="picture-card"
             showUploadList={false}
             className={styles.avatar}
-            accept="image/*" // 添加这行，限制只能选择图片文件
+            accept="image/*"
             beforeUpload={(file) => {
               // 验证文件类型
               const isImage = file.type.startsWith('image/');
               if (!isImage) {
-                message.error('只能上传图片文件！');
+                messageApi.error('只能上传图片文件！');
                 return false;
               }
               // 验证文件大小
               if (file.size > 5 * 1024 * 1024) {
-                message.error('图片大小不能超过 5MB');
+                messageApi.error('图片大小不能超过 5MB');
                 return false;
               }
               handleUpload(file);
               return false;
             }}
           >
-            {form.getFieldValue('avatar_url') || currentUser?.avatar_url ? (
+            {avatarUrl ? (
               <img
-                src={form.getFieldValue('avatar_url') || currentUser?.avatar_url}
+                src={avatarUrl}
                 alt="avatar"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
@@ -192,14 +211,6 @@ const ProfilePage: React.FC = () => {
             form={form}
             layout="vertical"
             className={styles.form}
-            initialValues={{
-              id: currentUser?.id,
-              nickname: currentUser?.nickname,
-              gender: currentUser?.gender,
-              phone: currentUser?.phone,
-              email: currentUser?.email,
-              avatar_url: currentUser?.avatar_url,
-            }}
             onFinish={onFinish}
           >
             {/* 添加隐藏的头像字段 */}
@@ -281,4 +292,11 @@ const ProfilePage: React.FC = () => {
   );
 };
 
-export default ProfilePage;
+// Wrap with App component to fix message API warning
+const ProfilePageWithApp: React.FC = () => (
+  <App>
+    <ProfilePage />
+  </App>
+);
+
+export default ProfilePageWithApp;
