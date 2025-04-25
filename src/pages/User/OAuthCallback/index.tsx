@@ -42,7 +42,6 @@ const OAuthCallback: React.FC = () => {
         }
       } catch (error) {
         message.error('登录处理失败');
-        console.error('登录处理失败:', error);
         history.push('/user/login');
       }
     };
