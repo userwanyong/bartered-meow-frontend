@@ -6,6 +6,7 @@ import { App, Button, Card, Descriptions, Divider, Image, Space, Typography } fr
 import { createStyles } from 'antd-style';
 import React, { useEffect, useState } from 'react';
 import { getUserById } from '@/services/user-center/userController'; // 添加导入
+import LogoHeader from '@/components/LogoHeader';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -66,7 +67,7 @@ const useStyles = createStyles(({ token }) => ({
     borderBottom: '1px solid #f0f0f0',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     padding: '0 50px',
     position: 'fixed',
     top: 0,
@@ -217,6 +218,7 @@ const GoodsDetail: React.FC = () => {
     <div>
       {/* 添加顶部栏 */}
       <div className={styles.topBar}>
+      <LogoHeader />
         <UserInfo />
       </div>
       {/* 原有的内容 */}

@@ -5,6 +5,7 @@ import { Button, Card, Form, Input, message, Select, Typography, Tooltip, Space,
 import { createStyles } from 'antd-style';
 import React, { useState, useEffect } from 'react';
 import { EyeOutlined, EyeInvisibleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import LogoHeader from '@/components/LogoHeader';
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -39,7 +40,7 @@ const useStyles = createStyles(({ token }) => ({
     borderBottom: '1px solid #f0f0f0',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     padding: '0 50px',
     position: 'fixed',
     top: 0,
@@ -160,6 +161,7 @@ const ProfilePage: React.FC = () => {
   return (
     <div>
       <div className={styles.topBar}>
+        <LogoHeader />
         <UserInfo />
       </div>
       {/* 原有的内容 */}

@@ -17,7 +17,6 @@ import {
   InputNumber,
   message,
   Modal,
-  Space,
   Table,
   Typography,
   App,
@@ -25,6 +24,7 @@ import {
 import { createStyles } from 'antd-style';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
+import LogoHeader  from '@/components/LogoHeader';
 
 const { Title, Text } = Typography;
 
@@ -73,7 +73,7 @@ const useStyles = createStyles(({ token }) => ({
     borderBottom: '1px solid #f0f0f0',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between', // 改为两端对齐
     padding: '0 50px',
     position: 'fixed',
     top: 0,
@@ -427,8 +427,10 @@ const Cart: React.FC = () => {
   return (
     <div>
       <div className={styles.topBar}>
+        <LogoHeader />
         <UserInfo />
       </div>
+      
 
       <div className={styles.container}>
         <div

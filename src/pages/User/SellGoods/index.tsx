@@ -9,6 +9,7 @@ import CreateModal from './components/CreateModal';
 import UpdateModal from './components/UpdateModal';
 import UserInfo from '@/components/UserInfo';
 import { createStyles } from 'antd-style';
+import LogoHeader from '@/components/LogoHeader';
 
 const { Title } = Typography;
 
@@ -21,7 +22,7 @@ const useStyles = createStyles(({ token }) => ({
     borderBottom: '1px solid #f0f0f0',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     padding: '0 16px',
     position: 'fixed',
     top: 0,
@@ -179,6 +180,7 @@ const UserSellGoodsPage: React.FC = () => {
   return (
     <>
       <div className={styles.topBar}>
+        <LogoHeader />
         <UserInfo />
       </div>
       

@@ -3,18 +3,30 @@ import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Image, message, Space, Typography } from 'antd';
-import React, { useRef, useState, useEffect } from 'react'; // Add useEffect
+import { Button, Image, message, Space, Typography, App } from 'antd';
+import React, { useRef, useState, useEffect } from 'react';
 import CreateModal from './components/CreateModal';
 import UpdateModal from './components/UpdateModal';
-import { getUserById } from '@/services/user-center/userController'; // 添加导入
+import { getUserById } from '@/services/user-center/userController';
+import { createStyles } from 'antd-style';
+
+// 创建响应式样式
+const useStyles = createStyles(({ token }) => ({
+  tableWrapper: {
+    overflowX: 'auto',
+  },
+  headerActions: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '16px',
+    flexWrap: 'wrap',
+    gap: '8px',
+  },
+}));
 
 /**
- * 商品管理页面
- *
- * @constructor
+ * 用户昵称组件
  */
-// Add UserNickname component
 const UserNickname: React.FC<{ userId: string }> = ({ userId }) => {
   const [nickname, setNickname] = useState(userId || '-');
 
@@ -29,7 +41,7 @@ const UserNickname: React.FC<{ userId: string }> = ({ userId }) => {
           setNickname(res.data.nickname);
         }
       } catch (error) {
-        message.error('获取用户昵称失败');
+        console.error('获取用户昵称失败', error);
       }
     };
 
@@ -39,7 +51,13 @@ const UserNickname: React.FC<{ userId: string }> = ({ userId }) => {
   return <span>{nickname}</span>;
 };
 
+/**
+ * 商品管理页面
+ *
+ * @constructor
+ */
 const GoodAdminPage: React.FC = () => {
+  const { styles } = useStyles();
   // 是否显示新建窗口
   const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
   // 是否显示更新窗口
@@ -47,6 +65,21 @@ const GoodAdminPage: React.FC = () => {
   const actionRef = useRef<ActionType>();
   // 当前商品点击的数据
   const [currentRow, setCurrentRow] = useState<API.GoodsResponseDTO>();
+  // 添加窗口宽度状态
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+  const { message, modal } = App.useApp();
+
+  // 监听窗口大小变化
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   /**
    * 删除节点
@@ -54,21 +87,29 @@ const GoodAdminPage: React.FC = () => {
    * @param row
    */
   const handleDelete = async (row: API.GoodsResponseDTO) => {
-    const hide = message.loading('正在删除');
-    if (!row) return true;
-    try {
-      await deleteGoodsById({
-        id: row.id as any,
-      });
-      hide();
-      message.success('删除成功');
-      actionRef?.current?.reload();
-      return true;
-    } catch (error: any) {
-      hide();
-      message.error('删除失败，' + error.message);
-      return false;
-    }
+    modal.confirm({
+      title: '确认删除',
+      content: '确定要删除该商品吗？删除后将无法恢复。',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: async () => {
+        const hide = message.loading('正在删除');
+        if (!row) return true;
+        try {
+          await deleteGoodsById({
+            id: row.id as any,
+          });
+          hide();
+          message.success('删除成功');
+          actionRef?.current?.reload();
+          return true;
+        } catch (error: any) {
+          hide();
+          message.error('删除失败，' + error.message);
+          return false;
+        }
+      },
+    });
   };
 
   /**
@@ -100,7 +141,11 @@ const GoodAdminPage: React.FC = () => {
       dataIndex: 'good_pic',
       render: (_, record) => (
         <div>
-          <Image src={record.good_pic} width={70} height={70} />
+          <Image 
+            src={record.good_pic} 
+            width={windowWidth < 768 ? 50 : 70} 
+            height={windowWidth < 768 ? 50 : 70} 
+          />
         </div>
       ),
       ellipsis: true,
@@ -128,7 +173,6 @@ const GoodAdminPage: React.FC = () => {
         },
       },
     },
-    // 添加创建人userId列
     {
       title: '商家',
       dataIndex: 'userId',
@@ -155,8 +199,10 @@ const GoodAdminPage: React.FC = () => {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
+      fixed: 'right',
+      width: windowWidth < 768 ? 80 : 120,
       render: (_, record) => (
-        <Space size="middle">
+        <Space size={windowWidth < 768 ? 'small' : 'middle'} direction={windowWidth < 768 ? 'vertical' : 'horizontal'}>
           <Typography.Link
             onClick={() => {
               setCurrentRow(record);
@@ -175,41 +221,52 @@ const GoodAdminPage: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<API.GoodsResponseDTO>
-        headerTitle={'商品数据'}
-        actionRef={actionRef}
-        rowKey="id"
-        search={{
-          showHiddenNum: true,
-          labelWidth: 65,
-        }}
-        toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            onClick={() => {
-              setCreateModalVisible(true);
-            }}
-          >
-            <PlusOutlined /> 新建
-          </Button>,
-        ]}
-        request={async (params, sort, filter) => {
-          // 参数转换，构建符合API要求的参数结构
-          const queryParams = {
-            goodsQueryRequestDTO: {
-              goodName: params.good_name,
-              state: params.state !== undefined ? Number(params.state) : undefined,
-              id: params.id || undefined,
-            }
-          };
+      <div className={styles.tableWrapper}>
+        <ProTable<API.GoodsResponseDTO>
+          headerTitle={'商品数据'}
+          actionRef={actionRef}
+          rowKey="id"
+          search={{
+            showHiddenNum: true,
+            labelWidth: 65,
+            defaultCollapsed: windowWidth < 768,
+            span: windowWidth < 768 ? 24 : undefined,
+          }}
+          toolBarRender={() => [
+            <Button
+              type="primary"
+              key="primary"
+              onClick={() => {
+                setCreateModalVisible(true);
+              }}
+            >
+              <PlusOutlined /> 新建
+            </Button>,
+          ]}
+          request={async (params, sort, filter) => {
+            // 参数转换，构建符合API要求的参数结构
+            const queryParams = {
+              goodsQueryRequestDTO: {
+                goodName: params.good_name,
+                state: params.state !== undefined ? Number(params.state) : undefined,
+                id: params.id || undefined,
+              }
+            };
 
-          const goodsList = await listGoodsAdmin(queryParams as API.listGoodsParams);
+            const goodsList = await listGoodsAdmin(queryParams as API.listGoodsParams);
 
-          return goodsList;
-        }}
-        columns={columns}
-      />
+            return goodsList;
+          }}
+          columns={columns}
+          scroll={{ x: 1200 }}
+          pagination={{
+            defaultPageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            size: windowWidth < 768 ? 'small' : 'default',
+          }}
+        />
+      </div>
       <CreateModal
         visible={createModalVisible}
         columns={columns}
@@ -237,4 +294,12 @@ const GoodAdminPage: React.FC = () => {
     </PageContainer>
   );
 };
-export default GoodAdminPage;
+
+// 使用App组件包装以解决message警告
+const GoodAdminPageWithApp: React.FC = () => (
+  <App>
+    <GoodAdminPage />
+  </App>
+);
+
+export default GoodAdminPageWithApp;

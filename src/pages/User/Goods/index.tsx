@@ -6,6 +6,7 @@ import { createStyles } from 'antd-style';
 import React, { useState, useEffect } from 'react';
 import { RobotOutlined, MenuOutlined } from '@ant-design/icons'; // 添加菜单图标
 import AIChat from '@/components/AIChat';
+import LogoHeader  from '@/components/LogoHeader';
 
 const { Search } = Input;
 const { Text, Title } = Typography;
@@ -19,7 +20,7 @@ const useStyles = createStyles(({ token }) => {
       borderBottom: '1px solid #f0f0f0',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center', // 改为居中对齐
+      justifyContent: 'space-between', // 改为两端对齐
       padding: '0 16px',
       position: 'fixed',
       top: 0,
@@ -27,9 +28,29 @@ const useStyles = createStyles(({ token }) => {
       zIndex: 1000,
       '@media (min-width: 768px)': {
         padding: '0 50px',
-        justifyContent: 'center', // 大屏幕下居中对齐
       },
     },
+    // 添加Logo和标题样式
+    logoContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      marginRight: '20px',
+    },
+    logo: {
+      width: '40px',
+      height: '40px',
+      marginRight: '10px',
+    },
+    title: {
+      fontSize: '18px',
+      fontWeight: 'bold',
+      color: '#333',
+      margin: 0,
+      '@media (max-width: 576px)': {
+        fontSize: '16px',
+      },
+    },
+    // 其他样式保持不变
     searchWrapper: {
       width: '100%',
       maxWidth: '100%', // 小屏幕下占满整个宽度
@@ -326,6 +347,9 @@ const GoodsPage: React.FC = () => {
           onClick={() => setDrawerVisible(true)}
           className={styles.menuButton}
         />
+        
+        {/* 添加Logo和标题 */}
+        <LogoHeader />
         
         <div className={styles.searchWrapper}>
           <Search

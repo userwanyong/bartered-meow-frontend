@@ -10,7 +10,7 @@ import { ExclamationCircleOutlined, ShoppingOutlined } from '@ant-design/icons';
 import { history, useLocation } from '@umijs/max';
 import { Button, Card, Divider, Empty, message, Modal, Space, Table, Tag, Typography } from 'antd';
 import { createStyles } from 'antd-style';
-import type { ColumnsType } from 'antd/es/table';
+import LogoHeader from '@/components/LogoHeader';
 import React, { useEffect, useState } from 'react';
 
 const { Title, Text } = Typography;
@@ -46,7 +46,7 @@ const useStyles = createStyles(({ token }) => ({
     borderBottom: '1px solid #f0f0f0',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     padding: '0 50px',
     position: 'fixed',
     top: 0,
@@ -440,6 +440,7 @@ const OrderPage: React.FC = () => {
   return (
     <div>
       <div className={styles.topBar}>
+        <LogoHeader />
         <UserInfo />
       </div>
 
