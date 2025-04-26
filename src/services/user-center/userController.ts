@@ -76,8 +76,8 @@ export async function list(
     method: 'GET',
     params: {
       ...params,
-      userQueryRequestDTO: undefined,
-      ...params['userQueryRequestDTO'],
+      arg0: undefined,
+      ...params['arg0'],
     },
     ...(options || {}),
   });

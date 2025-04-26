@@ -97,6 +97,10 @@ declare namespace API {
     updated_time?: string;
   };
 
+  type checkOrderParams = {
+    id: string;
+  };
+
   type deleteCartParams = {
     id: string;
   };
@@ -185,7 +189,7 @@ declare namespace API {
   };
 
   type listGoodsAdminParams = {
-    goodsQueryRequestDTO: GoodsQueryRequestDTO;
+    arg0: GoodsQueryRequestDTO;
   };
 
   type listGoodsByTagIdAdminParams = {
@@ -197,15 +201,15 @@ declare namespace API {
   };
 
   type listGoodsParams = {
-    goodsQueryRequestDTO: GoodsQueryRequestDTO;
+    arg0: GoodsQueryRequestDTO;
   };
 
   type listParams = {
-    userQueryRequestDTO: UserQueryRequestDTO;
+    arg0: UserQueryRequestDTO;
   };
 
   type listTagParams = {
-    tagQueryRequestDTO: TagQueryRequestDTO;
+    arg0: TagQueryRequestDTO;
   };
 
   type login1Params = {
@@ -268,11 +272,11 @@ declare namespace API {
   };
 
   type payParams = {
-    aliPay: AliPayRequestDTO;
+    arg0: AliPayRequestDTO;
   };
 
   type returnPayParams = {
-    aliPay: AliPayRequestDTO;
+    arg0: AliPayRequestDTO;
   };
 
   type service2Params = {

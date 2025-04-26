@@ -102,16 +102,36 @@ const UserSellGoodsPage: React.FC = () => {
       title: '商品名',
       dataIndex: 'good_name',
       copyable: true,
-      ellipsis: true,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (text) => (
+        <Typography.Text
+          ellipsis={{
+            tooltip: text,
+          }}
+          style={{ maxWidth: 150 }}
+        >
+          {text}
+        </Typography.Text>
+      ),
       search: false,
     },
     {
       title: '商品描述',
       dataIndex: 'good_description',
       copyable: true,
-      ellipsis: true,
+      ellipsis: true, // 简化为布尔值，不使用tooltip
+      render: (text) => (
+        <Typography.Text
+          ellipsis={{ tooltip: true }} // 只显示一行，超出部分省略，显示tooltip
+          style={{ maxWidth: 200 }}
+        >
+          {text}
+        </Typography.Text>
+      ),
       search: false,
-      hideInTable: windowWidth < 768, // 小屏幕下隐藏
+      hideInTable: windowWidth < 768,
     },
     {
       title: '商品图片',
@@ -223,16 +243,15 @@ const UserSellGoodsPage: React.FC = () => {
             rowKey="id"
             search={false}
             toolBarRender={false}
-            scroll={{ x: 'max-content' }}
+            scroll={{ x: 'max-content' ,y: undefined}}
             pagination={{
               defaultPageSize: 10,
               showSizeChanger: windowWidth >= 768,
               size: windowWidth < 768 ? 'small' : 'default',
             }}
             request={async () => {
-              const goodsList = await listGoods({
-                goodsQueryRequestDTO: {}
-              });
+              // 修改这里的参数，移除 goodsQueryRequestDTO 包装
+              const goodsList = await listGoods({ arg0: {} });
               
               return goodsList;
             }}

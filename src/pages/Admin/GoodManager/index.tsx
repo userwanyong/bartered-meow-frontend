@@ -253,7 +253,7 @@ const GoodAdminPage: React.FC = () => {
               }
             };
 
-            const goodsList = await listGoodsAdmin(queryParams as API.listGoodsParams);
+            const goodsList = await listGoodsAdmin(queryParams as any);
 
             return goodsList;
           }}

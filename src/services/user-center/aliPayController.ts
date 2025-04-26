@@ -21,8 +21,8 @@ export async function pay(
     method: 'GET',
     params: {
       ...params,
-      aliPay: undefined,
-      ...params['aliPay'],
+      arg0: undefined,
+      ...params['arg0'],
     },
     ...(options || {}),
   });
@@ -38,8 +38,8 @@ export async function returnPay(
     method: 'GET',
     params: {
       ...params,
-      aliPay: undefined,
-      ...params['aliPay'],
+      arg0: undefined,
+      ...params['arg0'],
     },
     ...(options || {}),
   });
