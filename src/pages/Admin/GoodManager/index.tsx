@@ -159,6 +159,20 @@ const GoodAdminPage: React.FC = () => {
       search: false,
     },
     {
+      title: '总数量',
+      width: 80,
+      dataIndex: 'total_count',
+      ellipsis: true,
+      search: false,
+    },
+    {
+      title: '剩余数量',
+      width: 80,
+      dataIndex: 'current_count',
+      ellipsis: true,
+      search: false,
+    },
+    {
       title: '状态',
       dataIndex: 'state',
       ellipsis: true,

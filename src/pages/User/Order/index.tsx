@@ -1,14 +1,15 @@
 import UserInfo from '@/components/UserInfo';
 import {
   cancelOrder,
+  checkOrder,
   deleteOrder,
   getOrderById,
   listOrder,
 } from '@/services/user-center/orderController';
 import { pay, returnPay } from '@/services/user-center/aliPayController';
-import { ExclamationCircleOutlined, ShoppingOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, QuestionCircleOutlined, ShoppingOutlined } from '@ant-design/icons';
 import { history, useLocation } from '@umijs/max';
-import { Button, Card, Divider, Empty, message, Modal, Space, Table, Tag, Typography } from 'antd';
+import { Button, Card, Divider, Empty, message, Modal, Space, Table, Tag, Tooltip, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import LogoHeader from '@/components/LogoHeader';
 import React, { useEffect, useState } from 'react';
@@ -214,11 +215,11 @@ const OrderPage: React.FC = () => {
       case 0:
         return <Tag color="blue">待付款</Tag>;
       case 1:
-        return <Tag color="green">待发货</Tag>;
+        return <Tag color="purple">待发货</Tag>;
       case 2:
         return <Tag color="orange">已发货</Tag>;
       case 3:
-        return <Tag color="purple">已完成</Tag>;
+        return <Tag color="green">已完成</Tag>;
       case 4:
         return <Tag color="red">已取消</Tag>;
       case 5:
@@ -398,18 +399,16 @@ const OrderPage: React.FC = () => {
       const baseUrl = `${protocol}//${hostname}${port ? `:${port}` : ''}`;
       const returnUrl = `${baseUrl}/user/orders`;
 
-      // 构建支付参数，将参数放在aliPay对象中
+      // 构建支付参数，将参数直接作为查询参数传递
       const payParams = {
-        orderId,
-        aliPay: {
-          subject: orderItem.good_name || '商品购买', // 订单标题，使用商品名称
-          traceNo: currentOrder.no, // 商户订单号，使用订单返回的no字段
-          totalAmount: currentOrder.total_price?.toString() || '0.0', // 订单总金额
-          alipayTraceNo: null, // 支付宝交易号，新订单为null
-          returnUrl: returnUrl // 支付成功后的回调URL
-        }
+        subject: orderItem.good_name || '商品购买', // 订单标题，使用商品名称
+        traceNo: currentOrder.no, // 商户订单号，使用订单返回的no字段
+        totalAmount: currentOrder.total_price?.toString() || '0.0', // 订单总金额
+        alipayTraceNo: null, // 支付宝交易号，新订单为null
+        returnUrl: returnUrl, // 支付成功后的回调URL
+        orderId: orderId // 订单ID
       };
-
+      
       // 调用支付接口
       const response = await pay(payParams as any);
 
@@ -437,6 +436,36 @@ const OrderPage: React.FC = () => {
     }
   };
 
+  // 处理确认收货
+  const handleConfirmReceipt = async (orderId: string) => {
+    Modal.confirm({
+      title: '确认收货',
+      icon: <ExclamationCircleOutlined />,
+      content: '确认已收到商品吗？确认后订单将完成。',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          setLoading(true);
+          const response = await checkOrder({ id: orderId });
+          
+          if (response.status === 200) {
+            message.success('确认收货成功');
+            // 刷新订单列表
+            fetchOrders();
+          } else {
+            message.error(response.message || '确认收货失败');
+          }
+        } catch (error) {
+          message.error('确认收货失败，请稍后重试');
+          console.error('确认收货失败:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    });
+  };
+
   return (
     <div>
       <div className={styles.topBar}>
@@ -456,7 +485,15 @@ const OrderPage: React.FC = () => {
           >
             <Title level={4}>
               <ShoppingOutlined style={{ marginRight: 8 }} />
-              我的订单
+              我的订单 
+              <Tooltip title={
+                <div>
+                  <p>● 付款1分钟后，系统自动发货</p>
+                  <p>● 交易进行中的订单不允许删除</p>
+                </div>
+              }>
+                <QuestionCircleOutlined style={{ fontSize: '16px', marginLeft: 4, color: '#1890ff', cursor: 'pointer' }} />
+              </Tooltip>
             </Title>
 
             <Button
@@ -527,7 +564,12 @@ const OrderPage: React.FC = () => {
                           申请退款
                         </Button>
                       )}
-                      {(record.state !== 1 && record.state !== 2) && (
+                      {record.state === 2 && (
+                        <Button type="link" onClick={() => handleConfirmReceipt(record.id as any)}>
+                          确认收货
+                        </Button>
+                      )}
+                      {(record.state !== 1 && record.state !== 2  && record.state!=0) && (
                         <Button type="link" danger onClick={() => handleDeleteOrder(record.id as any)}>
                           删除订单
                         </Button>

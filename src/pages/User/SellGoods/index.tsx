@@ -145,6 +145,12 @@ const UserSellGoodsPage: React.FC = () => {
       search: false,
     },
     {
+      title: '剩余数量',
+      dataIndex: 'current_count',
+      ellipsis: true,
+      search: false,
+    },
+    {
       title: '商品价格',
       dataIndex: 'good_price',
       ellipsis: true,

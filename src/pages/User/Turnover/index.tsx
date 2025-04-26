@@ -344,7 +344,7 @@ const Turnover: React.FC = () => {
               <CheckCircleOutlined style={{ marginRight: 8 }} />
               我的成交记录
             </Title>
-            <Tooltip title="冻结期：商品被购买,买家确认收货前">
+            <Tooltip title="冻结期：商品被购买,买家确认收货前 交易成功后，请联系客服提现">
               <QuestionCircleOutlined style={{ marginLeft: 8, color: '#1890ff', cursor: 'pointer' }} />
             </Tooltip>
           </div>
