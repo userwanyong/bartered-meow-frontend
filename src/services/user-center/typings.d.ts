@@ -189,7 +189,7 @@ declare namespace API {
   };
 
   type listGoodsAdminParams = {
-    arg0: GoodsQueryRequestDTO;
+    goodsQueryRequestDTO: GoodsQueryRequestDTO;
   };
 
   type listGoodsByTagIdAdminParams = {
@@ -201,15 +201,15 @@ declare namespace API {
   };
 
   type listGoodsParams = {
-    arg0: GoodsQueryRequestDTO;
+    goodsQueryRequestDTO: GoodsQueryRequestDTO;
   };
 
   type listParams = {
-    arg0: UserQueryRequestDTO;
+    userQueryRequestDTO: UserQueryRequestDTO;
   };
 
   type listTagParams = {
-    arg0: TagQueryRequestDTO;
+    tagQueryRequestDTO: TagQueryRequestDTO;
   };
 
   type login1Params = {
@@ -272,11 +272,11 @@ declare namespace API {
   };
 
   type payParams = {
-    arg0: AliPayRequestDTO;
+    aliPay: AliPayRequestDTO;
   };
 
   type returnPayParams = {
-    arg0: AliPayRequestDTO;
+    aliPay: AliPayRequestDTO;
   };
 
   type service2Params = {

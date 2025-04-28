@@ -257,7 +257,7 @@ const UserSellGoodsPage: React.FC = () => {
             }}
             request={async () => {
               // 修改这里的参数，移除 goodsQueryRequestDTO 包装
-              const goodsList = await listGoods({ arg0: {} });
+              const goodsList = await listGoods({ goodsQueryRequestDTO: {} });
               
               return goodsList;
             }}

@@ -55,8 +55,8 @@ export async function listGoodsAdmin(
     method: 'GET',
     params: {
       ...params,
-      arg0: undefined,
-      ...params['arg0'],
+      goodsQueryRequestDTO: undefined,
+      ...params['goodsQueryRequestDTO'],
     },
     ...(options || {}),
   });
@@ -86,8 +86,8 @@ export async function listGoods(
     method: 'GET',
     params: {
       ...params,
-      arg0: undefined,
-      ...params['arg0'],
+      goodsQueryRequestDTO: undefined,
+      ...params['goodsQueryRequestDTO'],
     },
     ...(options || {}),
   });
@@ -129,8 +129,8 @@ export async function listTag(
     method: 'GET',
     params: {
       ...params,
-      arg0: undefined,
-      ...params['arg0'],
+      tagQueryRequestDTO: undefined,
+      ...params['tagQueryRequestDTO'],
     },
     ...(options || {}),
   });

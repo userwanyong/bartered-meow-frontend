@@ -104,12 +104,12 @@ const CheckoutPage: React.FC = () => {
       setCartItems((location.state as any).selectedItems);
     } else {
       message.error('未选择商品，无法结算');
-      history.push('/cart');
+      history.push('/user/cart');
     }
   }, [location.state]);
 
   const handleBack = () => {
-    history.push('/cart');
+    history.push('/user/cart');
   };
 
   const calculateTotal = () => {
