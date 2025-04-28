@@ -9,12 +9,19 @@ const Footer: React.FC = () => {
       }}
       links={[
         {
-          key: 'Cat_shop',
+          key: '点击查看详情',
           title: '交易喵制作组',
-          href: '',
+          href: '/team',
+          blankTarget: true,
+        },
+        {
+          key: '2025.jsjds',
+          title: '2025中国大学生计算机设计大赛作品',
+          href: 'https://2025.jsjds.com.cn',
           blankTarget: true,
         },
       ]}
+      copyright="2025 交易喵制作组 版权所有"
     />
   );
 };

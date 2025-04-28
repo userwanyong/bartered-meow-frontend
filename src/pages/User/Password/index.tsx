@@ -4,6 +4,7 @@ import { LockOutlined } from '@ant-design/icons';
 import { updatePassword } from '@/services/user-center/userController';
 import UserInfo from '@/components/UserInfo';
 import { history } from '@umijs/max';
+import LogoHeader from '@/components/LogoHeader';
 
 const containerStyle = {
   padding: '24px',
@@ -17,7 +18,7 @@ const topBarStyle = {
   height: '64px',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'flex-end',
+  justifyContent: 'space-between',
   boxShadow: '0 1px 4px rgba(0, 0, 0, 0.08)',
 };
 
@@ -79,6 +80,7 @@ const PasswordPage: React.FC = () => {
   return (
     <div>
       <div style={topBarStyle}>
+        <LogoHeader />
         <UserInfo />
       </div>
 

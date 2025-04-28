@@ -2,10 +2,11 @@ import UserInfo from '@/components/UserInfo';
 import { addCart } from '@/services/user-center/cartController';
 import { ArrowLeftOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import { history, useLocation, useModel, useParams } from '@umijs/max';
-import { Button, Card, Descriptions, Divider, Image, message, Space, Typography } from 'antd';
+import { App, Button, Card, Descriptions, Divider, Image, Space, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useState } from 'react';
 import { getUserById } from '@/services/user-center/userController'; // 添加导入
+import LogoHeader from '@/components/LogoHeader';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -66,7 +67,7 @@ const useStyles = createStyles(({ token }) => ({
     borderBottom: '1px solid #f0f0f0',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     padding: '0 50px',
     position: 'fixed',
     top: 0,
@@ -120,6 +121,8 @@ const GoodsDetail: React.FC = () => {
   // 获取当前登录用户信息
   const { initialState } = useModel('@@initialState');
   const currentUser = initialState?.currentUser;
+  // 获取消息API
+  const { message } = App.useApp();
 
   useEffect(() => {
     // 从路由状态中获取商品详情
@@ -130,7 +133,7 @@ const GoodsDetail: React.FC = () => {
       // 这里可以添加通过 ID 获取商品详情的 API 调用
       message.error('商品信息获取失败，请返回重试');
     }
-  }, [location.state, params.id]);
+  }, [location.state, params.id, message]);
 
   const handleBack = () => {
     history.back();
@@ -215,6 +218,7 @@ const GoodsDetail: React.FC = () => {
     <div>
       {/* 添加顶部栏 */}
       <div className={styles.topBar}>
+      <LogoHeader />
         <UserInfo />
       </div>
       {/* 原有的内容 */}
@@ -302,4 +306,11 @@ const GoodsDetail: React.FC = () => {
   );
 };
 
-export default GoodsDetail;
+// Wrap the component with App to provide message context
+const GoodsDetailWithApp: React.FC = () => (
+  <App>
+    <GoodsDetail />
+  </App>
+);
+
+export default GoodsDetailWithApp;

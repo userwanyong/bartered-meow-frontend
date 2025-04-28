@@ -3,7 +3,6 @@ import { deleteTurnover, listTurnover } from '@/services/user-center/turnoverCon
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import {
-  Badge,
   Button,
   Card,
   Divider,
@@ -11,13 +10,12 @@ import {
   Image,
   message,
   Modal,
-  Popconfirm,
-  Space,
   Table,
   Tag,
   Tooltip,
   Typography,
 } from 'antd';
+import LogoHeader from '@/components/LogoHeader';
 import { createStyles } from 'antd-style';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
@@ -51,7 +49,7 @@ const useStyles = createStyles(({ token }) => ({
     borderBottom: '1px solid #f0f0f0',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     padding: '0 50px',
     position: 'fixed',
     top: 0,
@@ -328,6 +326,7 @@ const Turnover: React.FC = () => {
   return (
     <div>
       <div className={styles.topBar}>
+        <LogoHeader />
         <UserInfo />
       </div>
 
@@ -345,7 +344,7 @@ const Turnover: React.FC = () => {
               <CheckCircleOutlined style={{ marginRight: 8 }} />
               我的成交记录
             </Title>
-            <Tooltip title="冻结期：商品被购买,买家确认收货前">
+            <Tooltip title="冻结期：商品被购买,买家确认收货前 交易成功后，请联系客服提现">
               <QuestionCircleOutlined style={{ marginLeft: 8, color: '#1890ff', cursor: 'pointer' }} />
             </Tooltip>
           </div>

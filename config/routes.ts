@@ -30,7 +30,7 @@ export default [
   },
   {
     path: '/admin',
-    name: '管理页',
+    name: '信息管理',
     icon: 'crown',
     access: 'canAdmin', //权限判断
     routes: [
@@ -38,10 +38,18 @@ export default [
       { path: '/admin/user-manger', name: '用户管理', component: './Admin/UserManger' },
       { path: '/admin/good-manager', name: '商品管理', component: './Admin/GoodManager' },
       { path: '/admin/tag-manager', name: '分类管理', component: './Admin/TagManager' },
+      { path: '/admin/order-manager', name: '订单管理', component: './Admin/OrderManager' },
     ],
   },
 
   { path: '/', redirect: '/goods' },
+
+  {
+    path: '/team',
+    name: '团队',
+    component: './Team',
+    layout: false,
+  },
 
   { path: '*', layout: false, component: './404' },
   {

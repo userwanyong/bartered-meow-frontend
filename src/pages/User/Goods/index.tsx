@@ -1,11 +1,12 @@
 import UserInfo from '@/components/UserInfo';
 import { listGoodsAdmin, listGoodsByTagIdAdmin, listTag } from '@/services/user-center/goodsController';
 import { history, useModel } from '@umijs/max';
-import { Card, Image, Input, List, Menu, message, Typography } from 'antd';
+import { Card, Image, Input, List, Menu, message, Typography, Button, Drawer } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useState } from 'react';
-import { RobotOutlined } from '@ant-design/icons'; // 添加机器人图标
-import AIChat from '@/components/AIChat'; // 导入AI聊天组件
+import React, { useState, useEffect } from 'react';
+import { RobotOutlined, MenuOutlined } from '@ant-design/icons'; // 添加菜单图标
+import AIChat from '@/components/AIChat';
+import LogoHeader  from '@/components/LogoHeader';
 
 const { Search } = Input;
 const { Text, Title } = Typography;
@@ -19,39 +20,102 @@ const useStyles = createStyles(({ token }) => {
       borderBottom: '1px solid #f0f0f0',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center', // 添加居中对齐
-      padding: '0 50px',
+      justifyContent: 'space-between', // 改为两端对齐
+      padding: '0 16px',
       position: 'fixed',
       top: 0,
       left: 0,
       zIndex: 1000,
+      '@media (min-width: 768px)': {
+        padding: '0 50px',
+      },
     },
+    // 添加Logo和标题样式
+    logoContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      marginRight: '20px',
+    },
+    logo: {
+      width: '40px',
+      height: '40px',
+      marginRight: '10px',
+    },
+    title: {
+      fontSize: '18px',
+      fontWeight: 'bold',
+      color: '#333',
+      margin: 0,
+      '@media (max-width: 576px)': {
+        fontSize: '16px',
+      },
+    },
+    // 其他样式保持不变
     searchWrapper: {
-      width: '500px', // 固定搜索框宽度
-      position: 'absolute', // 使用绝对定位
-      left: '50%', // 左边距离50%
-      transform: 'translateX(-50%)', // X轴向左平移自身宽度的50%
+      width: '100%',
+      maxWidth: '100%', // 小屏幕下占满整个宽度
+      // 小屏幕下显示搜索框
+      display: 'block',
+      position: 'absolute',
+      bottom: '-50px', // 小屏幕下将搜索框放在导航栏下方
+      left: '0',
+      padding: '8px 16px',
+      background: '#fff',
+      borderBottom: '1px solid #f0f0f0',
+      transform: 'none',
+      '@media (min-width: 768px)': {
+        position: 'absolute',
+        bottom: 'auto',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        padding: '0',
+        border: 'none',
+        maxWidth: '500px', // 大屏幕下恢复最大宽度
+      },
     },
     userInfo: {
-      position: 'absolute', // 使用绝对定位
-      right: '50px', // 固定在右侧
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-end', // 小屏幕下靠右对齐
+      flex: '1',
+      '@media (min-width: 768px)': {
+        flex: '0 0 auto',
+        justifyContent: 'center', // 大屏幕下居中
+      },
+    },
+    menuButton: {
+      display: 'block',
+      '@media (min-width: 768px)': {
+        display: 'none',
+      },
     },
     container: {
-      marginTop: '80px',
-      padding: '20px 50px',
+      marginTop: '120px', // 增加顶部边距，为搜索框留出空间
+      padding: '10px',
+      '@media (min-width: 768px)': {
+        marginTop: '80px', // 大屏幕下恢复原来的边距
+        padding: '20px 50px',
+      },
     },
     sideNav: {
-      width: '200px',
-      background: '#fff',
-      padding: '20px 0',
-      position: 'fixed',
-      left: 0,
-      top: '60px',
-      bottom: 0,
-      borderRight: '1px solid #f0f0f0',
+      display: 'none', // 小屏幕下默认隐藏
+      '@media (min-width: 768px)': {
+        display: 'block',
+        width: '200px',
+        background: '#fff',
+        padding: '20px 0',
+        position: 'fixed',
+        left: 0,
+        top: '60px',
+        bottom: 0,
+        borderRight: '1px solid #f0f0f0',
+      },
     },
     mainContent: {
-      marginLeft: '220px',
+      marginLeft: '0', // 小屏幕下无边距
+      '@media (min-width: 768px)': {
+        marginLeft: '220px', // 大屏幕下有边距
+      },
     },
     header: {
       position: 'absolute',
@@ -73,11 +137,29 @@ const useStyles = createStyles(({ token }) => {
       },
     },
     card: {
+      width: '100%',
+      height: '100%',
       '&:hover': {
         boxShadow: token.boxShadowSecondary,
         transform: 'translateY(-3px)',
         transition: 'all 0.3s',
       },
+    },
+    cardContainer: {
+      height: '380px', // 固定卡片容器高度
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    cardImageContainer: {
+      height: '200px', // 固定图片容器高度
+      overflow: 'hidden',
+    },
+    cardContent: {
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      padding: '12px',
     },
     price: {
       color: token.colorError,
@@ -143,8 +225,23 @@ const GoodsPage: React.FC = () => {
   const [tagList, setTagList] = useState<API.TagResponseDTO[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedTagId, setSelectedTagId] = useState<string>('');
-  // 将AI聊天状态移到组件内部
   const [aiChatVisible, setAiChatVisible] = useState<boolean>(false);
+  // 添加侧边栏抽屉状态
+  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+  // 添加窗口宽度状态
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+
+  // 监听窗口大小变化
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   // 获取商品列表
   const fetchGoodsList = async (searchKey?: string) => {
@@ -218,11 +315,42 @@ const GoodsPage: React.FC = () => {
   const handleTagClick = (tagId: string) => {
     setSelectedTagId(tagId);
     fetchGoodsByTagId(tagId);
+    // 在移动端点击标签后关闭抽屉
+    if (windowWidth < 768) {
+      setDrawerVisible(false);
+    }
   };
-  // 在 GoodsPage 组件的 return 中修改布局：
+
+  // 渲染菜单内容
+  const renderMenu = () => (
+    <Menu
+      mode="vertical"
+      selectedKeys={[selectedTagId]}
+      onClick={({ key }) => handleTagClick(key)}
+      items={[
+        { key: '', label: '全部商品' },
+        ...tagList.map((tag) => ({
+          key: tag.id as string,
+          label: tag.tag_name,
+        })),
+      ]}
+    />
+  );
+
   return (
     <div>
       <div className={styles.topBar}>
+        {/* 添加菜单按钮 */}
+        <Button 
+          type="text" 
+          icon={<MenuOutlined />} 
+          onClick={() => setDrawerVisible(true)}
+          className={styles.menuButton}
+        />
+        
+        {/* 添加Logo和标题 */}
+        <LogoHeader />
+        
         <div className={styles.searchWrapper}>
           <Search
             placeholder="搜索商品"
@@ -232,23 +360,26 @@ const GoodsPage: React.FC = () => {
             onSearch={onSearch}
           />
         </div>
-        <UserInfo />
+        
+        <div className={styles.userInfo}>
+          <UserInfo />
+        </div>
       </div>
+
+      {/* 移动端侧边栏抽屉 */}
+      <Drawer
+        title="商品分类"
+        placement="left"
+        onClose={() => setDrawerVisible(false)}
+        open={drawerVisible}
+        width={250}
+      >
+        {renderMenu()}
+      </Drawer>
 
       <div className={styles.container}>
         <div className={styles.sideNav}>
-          <Menu
-            mode="vertical"
-            selectedKeys={[selectedTagId]}
-            onClick={({ key }) => handleTagClick(key)}
-            items={[
-              { key: '', label: '全部商品' },
-              ...tagList.map((tag) => ({
-                key: tag.id as string,
-                label: tag.tag_name,
-              })),
-            ]}
-          />
+          {renderMenu()}
         </div>
 
         <div className={styles.mainContent}>
@@ -305,12 +436,12 @@ const GoodsPage: React.FC = () => {
         </div>
       </div>
       
-      {/* 添加悬浮AI按钮 */}
+      {/* 恢复AI浮动按钮位置到左下角 */}
       <div 
         style={{
           position: 'fixed',
-          left: '20px',
-          bottom: '100px',
+          left: '20px', // 恢复到左下角
+          bottom: '100px', // 恢复原来的底部距离
           backgroundColor: '#1890ff',
           color: 'white',
           width: '50px',

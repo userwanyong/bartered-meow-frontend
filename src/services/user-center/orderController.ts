@@ -51,6 +51,20 @@ export async function cancelOrder(
   });
 }
 
+/** 此处后端没有提供注释 POST /order/check/${param0} */
+export async function checkOrder(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.checkOrderParams,
+  options?: { [key: string]: any },
+) {
+  const { id: param0, ...queryParams } = params;
+  return request<API.BaseResponseBoolean>(`${API_PREFIX}/order/check/${param0}`, {
+    method: 'POST',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 POST /order/delete/${param0} */
 export async function deleteOrder(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

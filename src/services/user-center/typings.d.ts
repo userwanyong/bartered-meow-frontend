@@ -97,6 +97,10 @@ declare namespace API {
     updated_time?: string;
   };
 
+  type checkOrderParams = {
+    id: string;
+  };
+
   type deleteCartParams = {
     id: string;
   };
