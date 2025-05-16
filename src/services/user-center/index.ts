@@ -6,6 +6,7 @@ import * as aiUserController from './aiUserController';
 import * as aliPayController from './aliPayController';
 import * as authController from './authController';
 import * as cartController from './cartController';
+import * as commentController from './commentController';
 import * as fileController from './fileController';
 import * as goodsController from './goodsController';
 import * as orderController from './orderController';
@@ -17,6 +18,7 @@ export default {
   orderController,
   goodsController,
   fileController,
+  commentController,
   cartController,
   aliPayController,
   authController,

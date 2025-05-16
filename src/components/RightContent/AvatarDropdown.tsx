@@ -8,7 +8,8 @@ import {
   ShoppingCartOutlined,
   ShoppingOutlined,
   UserOutlined,
-  CheckCircleOutlined, // 添加成交图标
+  CheckCircleOutlined,
+  CommentOutlined, // 添加成交图标
 } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import { Spin } from 'antd';
@@ -137,6 +138,11 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
       label: '我的成交',
     },
     {
+      key: 'comment', // 添加成交选项
+      icon: <CommentOutlined />,
+      label: '对我的评价',
+    },
+    {
       type: 'divider',
     },
     {
@@ -173,6 +179,9 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
           break;
         case 'turnover': // 添加成交选项的处理
           history.push('/user/turnover');
+          break;
+        case 'comment':
+          history.push(`/user/seller-comments/${currentUser?.id}`);
           break;
         case 'logout':
           flushSync(() => {

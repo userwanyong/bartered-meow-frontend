@@ -37,10 +37,10 @@ const LogoHeader: React.FC = () => {
     >
       <img 
         src="https://bartered-meow.oss-cn-beijing.aliyuncs.com/6c8e28c3-5d0a-4b5b-8176-4d847bea06f6.png" 
-        alt="交易喵" 
+        alt="智喵集市" 
         className={styles.logo}
       />
-      <h1 className={styles.title}>交易喵-AI交易平台</h1>
+      <h1 className={styles.title}>智喵集市-AI交易平台</h1>
     </div>
   );
 };

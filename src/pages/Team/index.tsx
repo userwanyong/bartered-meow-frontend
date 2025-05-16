@@ -131,13 +131,13 @@ const teamMembers = [
         blog: 'https://userwanyong.github.io',
     },
     {
-        name: '温若涵',
-        role: '后端开发、架构设计',
-        avatar: 'https://bartered-meow.oss-cn-beijing.aliyuncs.com/1c16d5ca-23b3-4826-86d1-fb6270bde9d1.png',
-        bio: '负责项目整体架构设计、后端框架设计、后端代码规范与审查',
+        name: '陈鸿利',
+        role: '---',
+        avatar: 'https://bartered-meow.oss-cn-beijing.aliyuncs.com/fd429664-2db5-4e45-b615-1d7707300713.jpg',
+        bio: '---',
         skills: ['SpringAI', 'DDD', 'JustAuth', 'oss'],
-        github: 'https://github.com/Wenrh2004',
-        email: '1696918097@example.com',
+        github: '---',
+        email: '---',
         blog: '',
     },
 ];
@@ -153,7 +153,7 @@ const TeamPage: React.FC = () => {
 
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <Title className={styles.teamTitle}>交易喵制作组</Title>
+                    <Title className={styles.teamTitle}>智喵集市制作组</Title>
                     <Paragraph className={styles.teamSubtitle}>
                         我们是一支充满激情的团队，致力于打造最优质的AI交易平台，为用户提供便捷、安全的交易体验
                     </Paragraph>
@@ -162,9 +162,9 @@ const TeamPage: React.FC = () => {
                 <div className={styles.projectInfo}>
                     <Title level={3} style={{ marginBottom: '16px' }}>项目简介</Title>
                     <Paragraph>
-                        交易喵是一个基于人工智能技术的交易平台，旨在为用户提供智能化的交易体验。
+                        智喵集市是一个基于人工智能技术的交易平台，旨在为用户提供智能化的交易体验。
                         平台集成了智能推荐、AI助手、自动化交易等功能，让交易变得更加简单高效。
-                        本项目是2025中国大学生计算机设计大赛的参赛作品，由交易喵团队精心打造
+                        本项目是2025中国大学生计算机设计大赛的参赛作品，由智喵集市团队精心打造
                     </Paragraph>
                     <Divider />
                     <Row gutter={[24, 16]}>

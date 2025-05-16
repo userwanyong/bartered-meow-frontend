@@ -90,6 +90,7 @@ const useStyles = createStyles(({ token }) => ({
 // 添加UserNickname组件
 const UserNickname: React.FC<{ userId: string }> = ({ userId }) => {
   const [nickname, setNickname] = useState(userId || '-');
+  const { styles } = useStyles();
 
   useEffect(() => {
     const fetchUserNickname = async () => {
@@ -109,7 +110,21 @@ const UserNickname: React.FC<{ userId: string }> = ({ userId }) => {
     fetchUserNickname();
   }, [userId]);
 
-  return <span>{nickname}</span>;
+  const handleClick = () => {
+    // 跳转到卖家评论页面
+    history.push(`/user/seller-comments/${userId}`);
+  };
+
+  return (
+    <span 
+      className={styles.username} 
+      onClick={handleClick}
+      style={{ cursor: 'pointer', color: '#1890ff', textDecoration: 'underline' }}
+      title="查看卖家评价"
+    >
+      {nickname}
+    </span>
+  );
 };
 
 const GoodsDetail: React.FC = () => {

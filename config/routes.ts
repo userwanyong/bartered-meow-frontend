@@ -89,4 +89,9 @@ export default [
     component: './User/Turnover',
     layout: false,
   },
+  {
+    path: '/user/seller-comments/:userId',
+    component: './User/Comments/SellerComments',
+    layout: false,
+  },
 ];

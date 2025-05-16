@@ -65,7 +65,7 @@ const Login: React.FC = () => {
   // 处理Gitee登录
   const handleGiteeLogin = async () => {
     try {
-      window.location.href = "http://47.104.212.220:8066/api/oauth/login/gitee";
+      window.location.href = "http://localhost:8066/api/oauth/login/gitee";
     } catch (error) {
       message.error('获取Gitee授权链接失败');
     }
@@ -401,7 +401,7 @@ const Login: React.FC = () => {
             maxWidth: '75vw',
           }}
           logo={<img alt="logo" src="/logo.png" />}
-          title="交易喵"
+          title="智喵集市"
           subTitle={'    '}
           initialValues={{
             autoLogin: true,
