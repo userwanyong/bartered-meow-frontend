@@ -28,6 +28,12 @@ declare namespace API {
     data?: boolean;
   };
 
+  type BaseResponseFinallyCommentResponseDTO = {
+    status?: number;
+    message?: string;
+    data?: FinallyCommentResponseDTO;
+  };
+
   type BaseResponseListCartResponseDTO = {
     status?: number;
     message?: string;
@@ -70,6 +76,12 @@ declare namespace API {
     data?: string;
   };
 
+  type BaseResponseTurnoverResponseDTO = {
+    status?: number;
+    message?: string;
+    data?: TurnoverResponseDTO;
+  };
+
   type BaseResponseUserResponseDTO = {
     status?: number;
     message?: string;
@@ -101,7 +113,31 @@ declare namespace API {
     id: string;
   };
 
+  type CommentAddRequestDTO = {
+    id?: string;
+    userId?: string;
+    commenterId?: string;
+    content?: string;
+    hidden?: number;
+    type?: number;
+  };
+
+  type CommentResponseDTO = {
+    id?: string;
+    content?: string;
+    hidden?: number;
+    type?: number;
+    user_id?: string;
+    commenter_id?: string;
+    created_time?: string;
+    updated_time?: string;
+  };
+
   type deleteCartParams = {
+    id: string;
+  };
+
+  type deleteCommentParams = {
     id: string;
   };
 
@@ -123,6 +159,11 @@ declare namespace API {
 
   type deleteUsingPOSTParams = {
     id: string;
+  };
+
+  type FinallyCommentResponseDTO = {
+    start?: number;
+    commentResponseDTO?: CommentResponseDTO[];
   };
 
   type getChatHistoryParams = {
@@ -188,6 +229,10 @@ declare namespace API {
     tag_ids?: string[];
   };
 
+  type listCommentByIdParams = {
+    userId: string;
+  };
+
   type listGoodsAdminParams = {
     goodsQueryRequestDTO: GoodsQueryRequestDTO;
   };
@@ -210,6 +255,10 @@ declare namespace API {
 
   type listTagParams = {
     tagQueryRequestDTO: TagQueryRequestDTO;
+  };
+
+  type listTurnoverByOrderIdParams = {
+    orderId: string;
   };
 
   type login1Params = {

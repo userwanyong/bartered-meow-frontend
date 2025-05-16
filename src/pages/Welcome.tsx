@@ -116,7 +116,7 @@ const Welcome: React.FC = () => {
               color: token.colorTextHeading,
             }}
           >
-            交易喵-AI交易平台
+            智喵集市-AI交易平台
           </div>
           <p
             style={{

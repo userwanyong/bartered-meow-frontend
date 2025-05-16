@@ -10,18 +10,18 @@ const Footer: React.FC = () => {
       links={[
         {
           key: '点击查看详情',
-          title: '交易喵制作组',
+          title: '智喵集市制作组',
           href: '/team',
           blankTarget: true,
         },
         {
           key: '2025.jsjds',
-          title: '2025中国大学生计算机设计大赛作品',
-          href: 'https://2025.jsjds.com.cn',
+          title: '2025jsp课程大作业',
+          href: '/',
           blankTarget: true,
         },
       ]}
-      copyright="2025 交易喵制作组 版权所有"
+      copyright="2025 智喵集市制作组 版权所有"
     />
   );
 };

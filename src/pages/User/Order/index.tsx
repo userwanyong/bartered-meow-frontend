@@ -8,13 +8,17 @@ import {
 } from '@/services/user-center/orderController';
 import { pay, returnPay } from '@/services/user-center/aliPayController';
 import { ExclamationCircleOutlined, QuestionCircleOutlined, ShoppingOutlined } from '@ant-design/icons';
-import { history, useLocation } from '@umijs/max';
-import { Button, Card, Divider, Empty, message, Modal, Space, Table, Tag, Tooltip, Typography } from 'antd';
+import { history, useLocation ,useModel} from '@umijs/max';
+import { Button, Card, Divider, Empty, message, Modal, Space, Table, Tag, Tooltip, Typography, Radio, Input } from 'antd';
 import { createStyles } from 'antd-style';
 import LogoHeader from '@/components/LogoHeader';
 import React, { useEffect, useState } from 'react';
+import { Form } from 'antd';
+import { addComment } from '@/services/user-center/commentController';
+import { listTurnoverAdmin, listTurnoverByOrderId } from '@/services/user-center/turnoverController';
 
 const { Title, Text } = Typography;
+const { TextArea } = Input;
 
 const useStyles = createStyles(({ token }) => ({
   container: {
@@ -67,7 +71,65 @@ const OrderPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [newOrderId, setNewOrderId] = useState<string | null>(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [commentForm] = Form.useForm();
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
+  const [currentSellerId, setCurrentSellerId] = useState<string>('');
+  const [currentOrderId, setCurrentOrderId] = useState<string>('');
+  const { initialState } = useModel('@@initialState'); 
+  const currentUser = initialState?.currentUser;  
 
+
+
+  // 处理评价卖家
+  const handleRateSeller = async (record: API.OrderResponseDTO) => {
+    try {
+      // 根据订单id查成交表得到卖家id
+      const response = await listTurnoverByOrderId({ orderId: record.id as string  });
+      if (response && response.data) {
+        const sellerId = response.data.sellerId; // 假设接口返回的数据中包含卖家ID
+        setCurrentSellerId(sellerId as string);
+        setCurrentOrderId(record.id as string);
+        setCommentModalVisible(true);
+        commentForm.resetFields();
+      } else {
+        message.error('无法获取卖家信息');
+      }
+    } catch (error) {
+      console.error('获取卖家信息失败:', error);
+      message.error('获取卖家信息失败');
+    }
+  };
+
+  // 提交评价
+  const handleSubmitComment = async () => {
+    try {
+      const values = await commentForm.validateFields();
+      setLoading(true);
+      if (!currentUser?.id) {
+        message.error('获取用户信息失败，请重新登录');
+        return;
+      }
+      
+      const response = await addComment({
+        userId: currentSellerId,
+        content: values.content,
+        type: values.type, // 0为好评，1为差评
+        commenterId: currentUser.id // 使用当前登录用户ID
+      }); 
+
+      if (response.status === 200) {
+        message.success('评价成功');
+        setCommentModalVisible(false);
+        history.push(`/user/seller-comments/${currentSellerId}`);
+      } else {
+        message.error(response.message || '评价失败');
+      }
+    } catch (error) {
+      message.error('评价失败，请稍后重试');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // 获取订单数据
   const fetchOrders = async () => {
@@ -408,7 +470,7 @@ const OrderPage: React.FC = () => {
         returnUrl: returnUrl, // 支付成功后的回调URL
         orderId: orderId // 订单ID
       };
-      
+
       // 调用支付接口
       const response = await pay(payParams as any);
 
@@ -448,7 +510,7 @@ const OrderPage: React.FC = () => {
         try {
           setLoading(true);
           const response = await checkOrder({ id: orderId });
-          
+
           if (response.status === 200) {
             message.success('确认收货成功');
             // 刷新订单列表
@@ -466,12 +528,47 @@ const OrderPage: React.FC = () => {
     });
   };
 
+  // 添加评价弹窗
+  const renderCommentModal = () => (
+    <Modal
+      title="评价卖家"
+      open={commentModalVisible}
+      onOk={handleSubmitComment}
+      onCancel={() => setCommentModalVisible(false)}
+      okText="提交评价"
+      cancelText="取消"
+    >
+      <Form form={commentForm} layout="vertical">
+        <Form.Item
+          name="type"
+          label="评价类型"
+          rules={[{ required: true, message: '请选择评价类型' }]}
+          initialValue={0}
+        >
+          <Radio.Group>
+            <Radio value={0}>好评</Radio>
+            <Radio value={1}>差评</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item
+          name="content"
+          label="评价内容"
+          rules={[{ required: true, message: '请输入评价内容' }]}
+        >
+          <TextArea rows={4} placeholder="请输入您对卖家的评价..." />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+
   return (
     <div>
       <div className={styles.topBar}>
         <LogoHeader />
         <UserInfo />
       </div>
+
+      {renderCommentModal()}
 
       <div className={styles.container}>
         <Card className={styles.mainCard}>
@@ -485,7 +582,7 @@ const OrderPage: React.FC = () => {
           >
             <Title level={4}>
               <ShoppingOutlined style={{ marginRight: 8 }} />
-              我的订单 
+              我的订单
               <Tooltip title={
                 <div>
                   <p>● 付款1分钟后，系统自动发货</p>
@@ -569,7 +666,12 @@ const OrderPage: React.FC = () => {
                           确认收货
                         </Button>
                       )}
-                      {(record.state !== 1 && record.state !== 2  && record.state!=0) && (
+                      {record.state === 3 && (
+                        <Button type="link" onClick={() => handleRateSeller(record)}>
+                          评价卖家
+                        </Button>
+                      )}
+                      {(record.state !== 1 && record.state !== 2 && record.state !== 0) && (
                         <Button type="link" danger onClick={() => handleDeleteOrder(record.id as any)}>
                           删除订单
                         </Button>
@@ -601,16 +703,12 @@ const OrderPage: React.FC = () => {
       </div>
     </div>
   );
-
-  // At the end of the file, make sure the export is correct
-};
-// 添加自定义样式
-const styleSheet = document.createElement('style');
-styleSheet.innerText = `
+};  // 添加自定义样式
+  const styleSheet = document.createElement('style');
+  styleSheet.innerText = `
   .custom-table .ant-table-row-selected > td {
     background-color: transparent !important;
   }
 `;
-document.head.appendChild(styleSheet);
-
-export default OrderPage;
+  document.head.appendChild(styleSheet);
+  export default OrderPage;

@@ -1,2 +1,1 @@
-docker build -t yong/bartered-meow-front-app:6.0 -f ./Dockerfile .
-
+docker build -t yong/bartered-meow-front-app:7.1 -f ./Dockerfile .

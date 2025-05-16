@@ -15,7 +15,7 @@ const Settings: ProLayoutProps & {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: '交易喵-AI交易平台',
+  title: '智喵集市-AI交易平台',
   pwa: true,
   logo: 'https://bartered-meow.oss-cn-beijing.aliyuncs.com/6c8e28c3-5d0a-4b5b-8176-4d847bea06f6.png',
   iconfontUrl: '',

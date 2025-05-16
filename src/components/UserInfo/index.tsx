@@ -9,6 +9,7 @@ import {
   ShoppingOutlined,
   UserOutlined,
   CheckCircleOutlined, // 添加成交图标
+  CommentOutlined
 } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import type { MenuProps } from 'antd';
@@ -63,6 +64,9 @@ const UserInfo: React.FC = () => {
       case 'turnover': // 添加成交选项的处理
         history.push('/user/turnover');
         break;
+      case 'comment':
+        history.push(`/user/seller-comments/${currentUser?.id}`);
+        break;
       case 'manage':
         history.push('/admin');
         break;
@@ -115,6 +119,11 @@ const UserInfo: React.FC = () => {
       key: 'turnover', // 添加成交选项
       icon: <CheckCircleOutlined />,
       label: '我的成交',
+    },
+    {
+      key: 'comment', // 添加成交选项
+      icon: <CommentOutlined />,
+      label: '对我的评价',
     },
     ...(currentUser?.role === 0
       ? [

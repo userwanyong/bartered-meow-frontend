@@ -3,6 +3,20 @@
 import { request } from '@umijs/max';
 import { API_PREFIX } from '../../../config/api';
 
+/** 此处后端没有提供注释 GET /turnover/${param0} */
+export async function listTurnoverByOrderId(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.listTurnoverByOrderIdParams,
+  options?: { [key: string]: any },
+) {
+  const { orderId: param0, ...queryParams } = params;
+  return request<API.BaseResponseTurnoverResponseDTO>(`${API_PREFIX}/turnover/${param0}`, {
+    method: 'GET',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 GET /turnover/admin/list */
 export async function listTurnoverAdmin(options?: { [key: string]: any }) {
   return request<API.BaseResponseListTurnoverResponseDTO>(`${API_PREFIX}/turnover/admin/list`, {
